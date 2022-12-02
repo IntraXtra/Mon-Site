@@ -1,0 +1,312 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&family=PT+Serif:ital,wght@1,700&family=Roboto+Condensed:wght@700&display=swap');
+@import url(imgg/ESC.png);
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Domine:wght@500&family=Stint+Ultra+Condensed&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Contrail+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sirin+Stencil&display=swap');
+
+body {
+    font-family: 'EB Garamond' , sans-serif;
+    padding : 0;
+    margin : 0;
+}
+ul {
+    margin: 200;
+    padding: 100;
+}
+li {
+    list-style-type: none;
+    
+}
+h2 {
+    text-transform: uppercase;
+    text-align: center;
+ 
+}
+a {
+    font-family: 'Sirin Stencil';
+    text-decoration: none;
+    color: rgb(190, 28, 28);
+    font-size: xx-large;
+}
+/* ******************NAVBAR****************** */
+nav {
+    overflow: hidden;
+    background-color: #fffae1;
+    position: fixed;
+    width: 100%;
+    opacity: 0.9;
+}
+header li {
+    float: right;
+    font-size: 1.2em;
+    color: rebeccapurple;
+}
+header li a {
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    padding: 15px 13px;
+    color: rebeccapurple;
+}
+#logo {
+    font-family: sans-serif ;
+    font-weight: lighter;
+    float:left;
+}
+/* ********************IMAGE PRINCIPALE*********** */
+
+#imagePrincipale {
+    padding-top: 1%;
+    background: url(imgg/presento.gif) no-repeat fixed 50% 50%;
+    background-size: cover;
+    height: 799px;
+    
+}
+h1 {
+    font-family:'Contrail One', serif;
+    text-align: center;
+    color : rgb(236, 236, 245);
+    font-size : 6em;
+    margin-top : 110px;
+}
+h3 {
+    text-align: center;
+    color: rgb(255, 255, 255);
+    font-size: 4em;
+    text-shadow: 5px 5px 5px rgb(27, 129, 160);
+}
+/* *******************PRESENTATION************** */
+#texte1 {
+    background-color: rgb(3, 3, 85);
+    padding: 10px 0px 100px 0;
+}
+#Palmares {
+    background-color: rgb(3, 3, 85);
+    padding: 10px 0px 100px 0;
+}
+h2 {
+    text-align: center;
+    color: rgb(255, 255, 255);
+    font-size: 4em;
+    text-shadow: 5px 5px 5px rgb(27, 129, 160);
+}
+
+#liiens {
+    background-color: rgb(3, 3, 85);
+    padding: 10px 0px 100px 0;
+
+}
+p {
+    font-family: 'Bebas Neue';
+    text-decoration: none;
+    color: rgb(95, 102, 105);
+
+}
+#langues {
+    background-color: rgb(3, 3, 85);
+    padding: 10px 0px 100px 0;
+
+
+}
+#contacts {
+
+    background-color: rgb(3, 3, 85);
+    padding: 10px 0px 100px 0;
+}
+#Trait {
+    background-color:aliceblue;
+    padding: 10px 0px 0px 0;
+}
+#copyright{
+    background-color: rgb(3, 3, 85);
+    padding: 20px 20px 20px 0;
+
+
+}
+#Icon {
+    background-color:rgb(3, 3, 85);
+    padding: 10px 0px 10px 0;
+}
+ 
+p{ text-align: center; }
+    
+h2{ text-align: center; }
+
+h3{ text-align: center; }
+
+#texte1 h4 { margin-left: 400px;
+                margin-right: 400px;
+              text-align:inherit;
+    
+}
+
+#texte1 h3 {
+    font-family:'Contrail One', serif;
+    text-align: center;
+    color : rgb(236, 236, 245);
+    font-size: larger;
+
+}
+
+#Trait { text-align: center }
+
+#Icon { text-align: center }
+
+#copyright { 
+    font-family:'Contrail One', serif;
+    text-align: center;
+    color : rgb(240, 240, 245);
+    
+
+}
+
+#contacts { text-align: center }
+
+h4 {
+    font-family:'Contrail One', serif;
+    text-align: center;
+    color : rgb(236, 236, 245);
+    font-size: larger;
+
+}
+#Presentation {
+    background-color: rgb(20, 18, 15);
+}
+
+#contacts p{
+    text-align: center;
+    font-family: inherit;
+    color: white;
+
+}
+table {
+    margin: auto;
+    }
+    td
+    {
+    text-align :center;
+    }
+
+
+
+tr {
+    border-bottom: 1px solid #ddd;
+  }
+
+#Onglet {
+    background-color: rgb(3, 3, 85);
+    padding: 10px 0px 100px 0;
+}
+
+#Onglet p{
+    text-align: center;
+    font-family: inherit;
+    color: white;
+}
+#Onglet h4{
+    text-align: center;
+    font-family: inherit;
+    color: white;
+}
+#Bobby {
+    padding-top: 1%;
+    background: url(imgg/mail.gif) no-repeat fixed 50% 50%;
+    background-size: cover;
+    height: 799px;
+    
+}
+#cvfy {
+    padding-top: 1%;
+    background: url(imgg/resume.gif) no-repeat fixed 50% 50%;
+    background-size: cover;
+    height: 799px;
+    
+}
+#cover {
+    padding-top: 1%;
+    background: url(imgg/motivated.gif) no-repeat fixed 50% 50%;
+    background-size: cover;
+    height: 799px;
+    
+}
+#skills {
+    padding-top: 1%;
+    background: url(imgg/skills.gif) no-repeat fixed 50% 50%;
+    background-size: cover;
+    height: 799px;
+    
+}
+
+#expe {
+    padding-top: 1%;
+    background: url(imgg/experience.gif) no-repeat fixed 50% 50%;
+    background-size: cover;
+    height: 799px;
+    
+}
+table {
+    border-collapse: separate;
+    border-spacing: 150px 0;
+  }
+  
+  td {
+    padding: 10px 0;
+    font-size: larger;
+  }
+
+
+
+
+
+  input, textarea, button {
+    border: none;
+    width: 50%;
+    padding: 15px 10px;
+    margin: 1px 0;
+    font-size: 1.2em;
+    font-family: 'Advent Pro', sans-serif;
+    border-radius: 8px;
+  }
+  textarea {
+    height: 80px;
+  }
+  button {
+    font-size: 1.5em;
+    background-color: #FFFAE1;
+    width: 50%;
+  }
+  button:hover {
+    background-color:rgb(85, 3, 3);
+    color: #e9c40e;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+  }
+
+  textarea {
+      height: 129px;
+  }
+
+  #reff{
+    background-color: rgb(3, 3, 85);
+    padding: 20px 20px 20px 0;
+    
+}
+
+#reff h4 {
+    margin-left: 400px;
+                margin-right: 400px;
+              text-align:inherit;
+    
+}
+
+#reff h3 {
+    font-family:'Contrail One', serif;
+    text-align: center;
+    color : rgb(236, 236, 245);
+    font-size: larger;
+
+}
+
+
+/*////////////TEST////////*/
+
