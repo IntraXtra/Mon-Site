@@ -1,0 +1,48 @@
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+I - Accéder au lien du site 
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+1) Cliquer sur le profil 
+2) Your repositories
+3) Mon-Site
+4) Settings
+5) Pages (à gauche quelque part dans l'écran settings)
+6) cliquer sur le lien en haut (par défaut https://intraxtra.github.io/Mon-Site/ mais si le repository est renommé en toto par exemple
+ça changerait en https://intraxtra.github.io/toto)
+
+
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+II - Renommer le repository
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+1) Aller dans Settings (pareil que dans le I) -> General
+2) Tout en haut il y a un champ de texte "Repository name" avec un bouton "Rename" dessus
+
+
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+III - Sauvegarder les changements vers GitHub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+1) clic droit sur le dossier "Mon Site" -> "Git Bash here"
+
+2) Faire un commit
+
+Pour commit : "git commit -m "message" (message obligatoire)
+
+S'il y a cette erreur :
+
+Error .index.lock: FAIRE
+
+rm .git/index.lock
+Refaire  git add *
+git commit -m "message"
+git push
+
+3) Push
+git push
