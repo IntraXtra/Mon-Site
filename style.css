@@ -220,6 +220,13 @@ tr {
     height: 799px;
     
 }
+#dobby {
+    padding-top: 1%;
+    background: url(imgg/mail.gif) no-repeat fixed 50% 50%;
+    background-size: cover;
+    height: 799px;
+    
+}
 #cvfy {
     padding-top: 1%;
     background: url(imgg/resume.gif) no-repeat fixed 50% 50%;
