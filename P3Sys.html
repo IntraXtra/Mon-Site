@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 3 - ProgSys</title>
+</head>
+<body>
+
+    <h2>Communication inter processus</h2>
+
+    <h3>3.1 Motivations</h3>
+    
+    <p>
+        Dans les chapitres précédents, nous avons vu :
+    </p>
+    <ul>
+        <li>que les processus s’exécutaient de manière <em><input type="text" id="trou1" placeholder="mot"></em> : un processus n’a aucun moyen ni d’accéder à la mémoire d’un autre, ni de savoir ce que cet autre fait.</li>
+        <li>que la seule donnée que peuvent échanger deux processus en mémoire est le code de sortie, récupérable par <code><input type="text" id="trou2" placeholder="mot"></code> ou <code><input type="text" id="trou3" placeholder="mot"></code>, d’un processus lorsqu’il meurt. Ce qui suppose un lien de parenté en plus de n’offrir que 8 bits d’information pertinente.</li>
+    </ul>
+    
+    <p>
+        Le but de la communication inter-processus, ou <strong><input type="text" id="trou4" placeholder="mot"></strong> pour <strong><input type="text" id="trou5" placeholder="mot"></strong> en anglais, est de fournir un ensemble de fonctions systèmes à au moins deux processus sans lien de parenté particulier de s’échanger des données sans qu’aucun ne doive terminer.
+    </p>
+    
+    <p>
+        Nous avons déjà vu une technique qui permet de répondre au problème de l’échange : il s’agit des <input type="text" id="trou6" placeholder="mot">, qui peuvent être ouverts, lus, et modifiés par n’importe quel processus et n’importe quand, pourvu qu’ils en aient les droits. En dehors de <input type="text" id="trou7" placeholder="mot">, il n’existe qu’une seule autre technique qui permet d’échanger des données : la <strong><input type="text" id="trou8" placeholder="mot"></strong>. Comme son nom l’indique, elle permet à un ou plusieurs processus ayant droit de partage de lire ou écrire directement dans un segment particulier de la mémoire. Nous la traitons au paragraphe 3.3 de ce chapitre.
+    </p>
+    
+    <p>
+        Il est toutefois indispensable de comprendre dès le départ une chose simple : la plupart du temps, il ne suffit pas savoir comment échanger ; encore faut-il savoir le faire. Ce deuxième problème, qui n’est pas celui du partage, mais de la <strong><input type="text" id="trou9" placeholder="mot"></strong>, est tout aussi important.
+    </p>
+    
+    <p>
+        Pour voir cela, considérons le cas élémentaire d’un processus A qui veut envoyer un message à un processus B par l’intermédiaire d’un <input type="text" id="trou10" placeholder="mot">, ou d’une <input type="text" id="trou11" placeholder="mot"> partagée. Si le message que veut envoyer A est plus long que 512 octets, quand B saura-t-il que A a terminé d’écrire sa question ?
+    </p>
+    
+    <p>
+        Pour y répondre, on peut envisager une technique très simple : on va utiliser une boîte à lettres, munie d’un champ de contrôle que l’on pourra modifier pour indiquer la présence ou non d’un message. On peut penser alors à utiliser une structure de données :
+    </p>
+    
+    <pre><code>struct BAL {
+        char <input type="text" id="trou12" placeholder="mot">;   /* = 1 si rempli, 0 sinon */
+        char <input type="text" id="trou13" placeholder="mot">[20000];
+    };</code></pre>
+    
+    <p>
+        et le processus A désirant déposer un message commence d’abord par remplir le champ <code><input type="text" id="trou14" placeholder="mot"></code>, puis positionne le champ <code><input type="text" id="trou15" placeholder="mot"></code> à 1 en dernier. À supposer que les échanges se fassent en mémoire (ou dans des fichiers de 20001 caractères) par l’intermédiaire d’une variable de type <code>struct BAL</code> :
+    </p>
+    
+    <pre><code>struct BAL <input type="text" id="trou16" placeholder="mot">;</code></pre>
+    
+
+    <p>
+        On peut alors voir d’emblée que même si cette solution fonctionne, elle est largement critiquable : elle implique en effet une boucle <code><input type="text" id="trou17" placeholder="mot"></code> dans le processus B, qui ne fera <em><input type="text" id="trou18" placeholder="mot"></em>, sinon d’attendre que le drapeau plein change d’état en consommant 100% du temps CPU pendant qu’elle attend… en pure perte ! On parle d’<strong><input type="text" id="trou19" placeholder="mot"></strong> dans pareil cas. Si les échanges se font via un fichier, la situation est encore pire : il faut relire le fichier en permanence.
+    </p>
+    
+    <p>
+        Il faut évidemment éviter cela. Or, le diagramme d’état des processus Unix, qui est reproduit en figure 4.1, permet justement d’éviter cela, en faisant basculer le processus en attente à l’état bloqué, où il n’est plus exécuté. Le processus ne repassera à l’état prêt que sur réception d’un <input type="text" id="trou20" placeholder="mot">, lequel n’est émis que lorsqu’une donnée est disponible ; nous verrons cela en détail au chapitre 3 lorsque nous étudierons les signaux.
+    </p>
+    
+    <p>
+        Il y a également un deuxième problème : si A veut envoyer des messages en boucle infinie, il doit attendre un acquittement de la part de B, lui signifiant que le dernier message dans la <code>struct <input type="text" id="trou21" placeholder="mot"></code> a bien été lu, et peut être écrasé par un nouveau. Sinon le premier message est perdu. Il faut donc rajouter un membre supplémentaire dans la <code>struct BAL</code> pour que B puisse notifier son acquittement, et A devra lui aussi faire une boucle <code><input type="text" id="trou22" placeholder="mot"></code> vide pour attendre activement cet acquittement.
+    </p>
+    
+    <p>
+        Le problème de la <input type="text" id="trou23" placeholder="mot"> est traité en détail au chapitre 4. Pour l’instant, retenons simplement qu’échanger des données sans synchronisation ne présente pas grand intérêt en soi, et que les deux problèmes d’échange et de synchronisation sont presque toujours indissociables.
+    </p>
+    
+    <p>
+        À l’origine, <input type="text" id="trou24" placeholder="mot"> est un ensemble de services introduits par <input type="text" id="trou25" placeholder="mot"></input> dès les premières versions de <input type="text" id="trou26" placeholder="mot"></input>, son système UNIX propriétaire. Ils comprennent :
+    </p>
+    <ol>
+        <li><strong><input type="text" id="trou27" placeholder="mot"></strong>, dont la fonction est d’offrir le partage de segments de mémoire entre processus. Elle est toujours utilisée de nos jours.</li>
+        <li><strong><input type="text" id="trou28" placeholder="mot"></strong>, qui servent à synchroniser les processus. Ils sont eux aussi toujours utilisés, mais on leur préfère souvent l’interface POSIX, qui est moins complexe que l’interface System V. Ils seront traités au chapitre 4.</li>
+        <li><strong><input type="text" id="trou29" placeholder="mot"></strong>, qui combinent les deux ressources précédentes de manière transparente pour offrir une véritable mémoire partagée synchronisée. Elles ne sont toutefois plus très utilisées, car largement supplantées par les <strong><input type="text" id="trou30" placeholder="mot"></strong>.</li>
+    </ol>
+    
+    <h3>3.2 Les verrous de fichiers</h3>
+    
+    <p>
+        Tous ces services permettent des échanges directs entre processus sans passer explicitement par les fichiers. Or, il se trouve qu’il existe aussi un autre moyen de synchroniser et d’échanger des données, en n’utilisant que les fichiers : il s’agit des <input type="text" id="trou31" placeholder="mot">. Nous présentons donc aussi cette solution dans ce chapitre, puisqu’elle répond elle aussi au problème de l’échange et de la synchronisation.
+    </p>
+    
+    <p>
+        Les <strong>verrous</strong> de fichiers constituent le moyen le plus simple d’empêcher que deux processus ou plus n’accèdent en même temps à un fichier, ou à un segment de fichier. Ils permettent de considérer le fichier comme une ressource à utilisation exclusive, également appelée <strong><input type="text" id="trou32" placeholder="mot"></strong>. La logique des verrous est la suivante :
+    </p>
+    
+    <ul>
+        <li>Un verrou n’est rattaché à un fichier et un seul</li>
+        <li>Il ne peut y avoir deux verrous rattachés à un même fichier</li>
+        <li>Lorsqu’un processus veut accéder à un fichier, il doit demander la permission préalable au système en demandant à verrouiller le fichier. De deux choses l’une alors :
+            <ul>
+                <li>Soit le fichier n’est pas déjà verrouillé, auquel cas la demande est acceptée, le fichier est verrouillé, et le processus poursuit son exécution.</li>
+                <li>Soit le fichier est déjà verrouillé, auquel cas le système fait basculer le processus demandeur vers l’état <strong><input type="text" id="trou33" placeholder="mot"></strong>. Il ne sera débloqué (pour repasser à l’état prêt) que lorsque le verrou posé aura été levé.</li>
+            </ul>
+        </li>
+        <li>Après avoir utilisé le fichier, le processus déverrouille le fichier.</li>
+        <li>Le verrouillage de fichier est une opération <strong><input type="text" id="trou34" placeholder="mot"></strong>, c-à-d que si deux processus demandent à poser un verrou sur le même fichier en <em><input type="text" id="trou35" placeholder="mot"></em>, seul l’un d’entre eux y parviendra – l’autre sera bloqué. Le processus choisi par le système dans pareil cas est imprévisible.</li>
+        <li>La levée des verrous non levés explicitement est automatiquement faite par le système lorsque le processus meurt.</li>
+    </ul>
+    
+
+    <p>
+        Ces règles fonctionnent aussi bien pour le verrouillage de tout un fichier que pour un segment seulement : seule la fonction à appeler change.
+    </p>
+    <h3>3.2.1 Verrouiller un fichier en intégralité avec <code><input type="text" id="trou36" placeholder="mot"></code></h3>
+    
+    <pre><code>#include &lt;sys/file.h&gt;
+    
+    int <input type="text" id="trou37" placeholder="mot">(int fd, int operation);
+    </code></pre>
+    
+    <p>
+        La fonction pose ou lève un verrou, selon que <code>operation == <input type="text" id="trou38" placeholder="mot"></code> ou <code>operation == <input type="text" id="trou39" placeholder="mot"></code>, sur le fichier identifié par <code>fd</code>, ouvert par <code>open()</code> avec le droit d’écriture (<code><input type="text" id="trou40" placeholder="mot"></code> ou <code><input type="text" id="trou41" placeholder="mot"></code>). Elle renvoie 0 en cas de succès, et une valeur négative dans le cas contraire.
+    </p>
+    
+    <p>
+        Remarquer que comme il n’existe qu’un seul verrou par fichier, deux descripteurs menant au même fichier (par un <code><input type="text" id="trou42" placeholder="mot"></code>) manipulent en fait le même verrou.
+    </p>
+    
+    <h3>3.2.2 Mise en œuvre</h3>
+    
+    <p>
+        Le listing 3.1 montre une mise en œuvre élémentaire de <code>flock()</code>. Le <code>main()</code> va d’abord créer un fichier, et y inscrire la valeur entière 1. Il crée ensuite N fils. Tous les processus (y compris le père) vont alors rouvrir le fichier, et exécuter une vingtaine de fois :
+    </p>
+    
+    <ul>
+        <li>Lire l’entier du fichier, et l’afficher à l’écran</li>
+        <li>L’incrémenter</li>
+        <li>Réécrire la valeur incrémentée, et l’afficher à l’écran</li>
+    </ul>
+    <p>
+        Les appels à <code><input type="text" id="trou43" placeholder="mot"></code> ont pour but de mettre en attente le processus appelant pendant un temps indéterminé. Les premières lignes affichées sont les suivantes :
+    </p>
+    
+    <pre><code>PID 3852 debout
+    PID 3852 a lu 1
+    PID 3852 a écrit 2
+    PID 3853 debout
+    PID 3854 debout
+    </code></pre>
+    
+    <p>
+        On constate que le comportement est bien celui attendu : c’est le même PID qui lit puis écrit. Il n’est jamais interrompu, malgré les appels à <code>usleep()</code>. Enlever les appels à <code>flock()</code> annule cette garantie.
+    </p>
+    
+    <p>
+        Les verrous de fichiers n’offrent malheureusement pas plus que la garantie d’accès exclusif à un fichier, ce qui limite leur utilité en pratique.
+    </p>
+    
+
+    <h3>3.3 La mémoire partagée</h3>
+
+    <p>
+        Si l’échange de données par fichiers s’avère trop lent pour l’application envisagée, la seule alternative possible est d’utiliser la <strong><input type="text" id="trou44" placeholder="mot"></strong>. Cette technique permet à plusieurs processus de partager un même segment alloué en mémoire centrale. Ceci est possible grâce au mécanisme de traduction par la <input type="text" id="trou45" placeholder="mot"> à l’aide des tables de régions par processus, et de régions en mémoire centrale, que nous avons vu au chapitre 1. Nous renvoyons à cet effet le lecteur à la figure 1.4, et produisons une figure simplifiée en figure 3.2 pour les besoins de nos explications.
+    </p>
+    
+    <p>
+        L’allocation de mémoire partagée se passe en deux temps :
+    </p>
+    
+    <ol>
+        <li>Un premier processus demande l’allocation d’un segment mémoire d’une taille spécifiée en mémoire centrale. Ceci est fait par la fonction <code><input type="text" id="trou46" placeholder="mot"></code>, qui renvoie en retour un <strong><input type="text" id="trou47" placeholder="mot"></strong> de mémoire partagée (c’est un entier). Ce premier processus peut alors continuer son existence, mais aussi mourir : la mémoire allouée par <code>shmget()</code> est une ressource permanente, elle n’est pas conditionnée au processus qui l’a créé, et continue à exister malgré sa mort.</li>
+        <li>Tout processus détenant connaissance de la valeur de cet identifiant, et possédant les droits pour l’utiliser, peut alors <strong><input type="text" id="trou48" placeholder="mot"></strong> le segment de mémoire partagée à son propre espace mémoire en invoquant <code><input type="text" id="trou49" placeholder="mot"></code> sur la clé retournée par <code>shmget()</code>. L’action de <code>shmat()</code> consiste essentiellement à compléter les tables de régions par processus et de régions en mémoire centrale en créant les entrées supplémentaires nécessaires, les remplissant avec les pointeurs adéquats, comme le suggère la figure 3.2.</li>
+    </ol>
+    
+    <p>
+        À noter que le rattachement du segment mémoire n’est possible que moyennant des droits <input type="text" id="trou50" placeholder="mot"> (user-group-others) qui sont spécifiés à <code>shmget()</code>. Accéder à un segment de mémoire partagée ou à un fichier met en jeu le même système de droits.
+    </p>
+    <pre><code>#include &lt;sys/shm.h&gt;
+    
+        int <input type="text" id="trou51" placeholder="mot">(key_t key, size_t size, int shmflg);
+        </code></pre>
+        
+    <p>
+        La fonction <code>shmget()</code> alloue un segment contigu de <code>size</code> octets en mémoire centrale. Le comportement de <code>shmget</code> est conditionné par la valeur de <code>key</code>, et de deux bits particuliers des drapeaux <code><input type="text" id="trou52" placeholder="mot"></code> :
+    </p>
+        
+    <ul>
+        <li>Si <code>key</code> vaut la valeur particulière <code><input type="text" id="trou53" placeholder="mot"></code>, cela signifie que le système a la liberté de choisir la valeur d’identifiant à retourner. Si ce n’est pas le cas, cela signifie que c’est cette valeur qui devra être retournée, et pas une autre. De deux choses l’une alors : l’identifiant désigne déjà un segment alloué. Le comportement dépend alors de deux bits de <code>shmflg</code>.
+            <ul>
+                <li>Si <code>shmflg &amp; <input type="text" id="trou54" placeholder="mot"> != 0</code>, cela signifie que vous demandez la création d’un nouveau segment en mémoire. Si de plus <code>key != IPC_PRIVATE</code> et que le segment existe déjà, cela provoquera une erreur. Sinon, le segment sera créé avec la valeur de <code>key</code> que vous avez spécifiée.</li>
+                <li>Si au contraire <code>shmflg &amp; IPC_CREAT == 0</code>, alors <code>shmget()</code> ne créera rien, mais regardera si <code>key</code> désigne un segment existant, et renverra -1 si ce n’est pas le cas.</li>
+                <li>Si <code>shmflg &amp; <input type="text" id="trou55" placeholder="mot"> != 0</code> et <code>shmflg &amp; IPC_CREAT != 0</code> simultanément, alors <code>shmget()</code> échouera s’il existe déjà un segment d’identifiant <code>key</code>.</li>
+            </ul>
+        </li>
+    </ul>
+        
+    <p>
+        Les 9 bits de poids faible de <code>shmflg</code> contiennent les droits d’accès UGO au segment de mémoire partagée. La fonction renvoie toujours un identifiant positif en cas de succès, et une valeur négative en cas d’erreur.
+    </p>
+        
+    <h3>3.3.2 Attacher et détacher un segment : les fonctions <code><input type="text" id="trou56" placeholder="mot"></code> et <code><input type="text" id="trou57" placeholder="mot"></code></h3>
+        
+    <pre><code>#include &lt;sys/types.h&gt;
+    #include &lt;sys/shm.h&gt;
+    
+    void *<input type="text" id="trou58" placeholder="mot">(int shmid, const void *shmaddr, int shmflg);
+    int <input type="text" id="trou59" placeholder="mot">(const void *shmaddr);
+    </code></pre>
+    
+    
+    <p>
+        La fonction <code>shmat()</code> rattache le segment de mémoire partagé d’identifiant <code><input type="text" id="trou60" placeholder="mot"></code> à l’espace mémoire adressable par le processus appelant. Si <code>shmaddr == NULL</code>, le système choisit lui-même l’adresse à laquelle le rattachement est fait, et renvoie un pointeur vers elle en valeur de retour. Si <code>shmaddr != NULL</code>, alors le système essaiera de faire le rattachement à la valeur spécifiée exactement, sauf si <code>shmflg &amp; <input type="text" id="trou61" placeholder="mot"></code>, auquel cas l’adresse libre la plus proche multiple de <code><input type="text" id="trou62" placeholder="mot"></code> sera utilisée.
+    </p>
+    
+    <p>
+        Si <code>shmflg &amp; <input type="text" id="trou63" placeholder="mot"></code>, le segment est rattaché avec permission de lecture seulement. Par défaut, il y a permissions de lecture et écriture sous réserve que les droits le permettent. La fonction renvoie un pointeur vers l’adresse de base du segment, ou <code>NULL</code> en cas d’erreur. D’autres bits sont également possibles pour <code>shmflg</code> sur certains systèmes (notamment, <code><input type="text" id="trou64" placeholder="mot"></code> et <code><input type="text" id="trou65" placeholder="mot"></code>).
+    </p>
+    
+    <p>
+        La fonction <code>shmdt()</code> permet quant à elle de détacher le segment <code>shmaddr</code>, préalablement attaché par <code>shmat()</code>. Elle renvoie 0 en cas de succès, une valeur négative dans le cas contraire.
+    </p>
+    
+    <h3>3.3.3 Consulter, modifier, ou détruire un segment : la fonction <code><input type="text" id="trou66" placeholder="mot"></code></h3>
+    
+    <pre><code>#include &lt;sys/ipc.h&gt;
+    #include &lt;sys/shm.h&gt;
+    
+    int <input type="text" id="trou67" placeholder="mot">(int shmid, int cmd, struct shmid_ds *buf);
+    </code></pre>
+    
+    <p>
+        La fonction <code>shmctl</code> exécute la commande <code>cmd</code> sur le segment d’identifiant <code>shmid</code>. Si <code>cmd == <input type="text" id="trou68" placeholder="mot"></code>, elle consulte l’état du segment et affecte la variable pointée par <code>buf</code> en conséquence. Au contraire, si <code>cmd == <input type="text" id="trou69" placeholder="mot"></code>, elle affecte le segment en fonction des informations qu’elle trouve dans <code>*buf</code>.
+    </p>
+    
+    <p>
+        Sur Linux :
+    </p>
+    
+    <pre><code>struct shmid_ds {
+        struct ipc_perm shm_perm;   /* Ownership and permissions */
+        size_t shm_segsz;           /* Size of segment (bytes) */
+        time_t shm_atime;           /* Last attach time */
+        time_t shm_dtime;           /* Last detach time */
+        time_t shm_ctime;           /* Last change time */
+        pid_t shm_cpid;             /* PID of creator */
+        pid_t shm_lpid;             /* PID of last shmat(2)/shmdt(2) */
+        shmatt_t shm_nattch;        /* No. of current attaches */
+        ...
+    };
+    </code></pre>
+    
+    <p>
+        Enfin, si <code>cmd == <input type="text" id="trou70" placeholder="mot"></code>, elle supprime le segment.
+    </p>
+    
+    <h3>3.3.4 Mise en œuvre</h3>
+    
+    <p>
+        Nous allons montrer comment mettre en œuvre la mémoire partagée à l’aide de trois programmes :
+    </p>
+    
+    <ul>
+        <li><code>creation.c</code>, qui ne fait rien d’autre que créer un segment de mémoire partagée de 200 octets, et écrire la valeur de la clé.</li>
+        <li><code>modif.c</code>, qui prend la clé spécifiée en paramètre, rattache le segment en mémoire, affiche son contenu, le modifie, puis le détache.</li>
+        <li><code>suppression.c</code>, qui supprime le segment dont la clé est spécifiée en paramètre.</li>
+    </ul>
+    
+    <h3>3.4 Les tubes</h3>
+    
+    <p>
+        Les tubes constituent la solution de communication inter-processus synchronisée la plus élégante, et la plus simple à utiliser qui soit.
+    </p>
+    
+    <p>
+        Schématiquement, un <strong><input type="text" id="trou71" placeholder="mot"></strong> est un objet système qui s’apparente à une quantité limitée de mémoire, et à une paire de descripteurs de fichiers :
+    </p>
+    
+    
+    <ul>
+        <li>les données qui sont écrites sur l’<strong><input type="text" id="trou72" placeholder="mot"></strong> du tube, sont recopiées par le système vers l’espace mémoire qu’il a alloué lors de la création du tube. Si cet espace est saturé, l’écriture est <strong><input type="text" id="trou73" placeholder="mot"></strong>.</li>
+        <li>à l’inverse, lorsqu’une lecture est demandée sur la <strong><input type="text" id="trou74" placeholder="mot"></strong> du tube, le système recopie les données les plus anciennes depuis la mémoire vers la sortie, et libère la mémoire. S’il n’y a plus de données en mémoire, la lecture est <input type="text" id="trou75" placeholder="mot">.</li>
+    </ul>
+    
+    <p>
+        Le tube fonctionne donc comme une file <input type="text" id="trou76" placeholder="mot"> (first in, first out), et le caractère bloquant des lectures et écritures, avec la mémoire limitée, fait qu’il implémente exactement la solution du producteur-consommateur :
+    </p>
+    
+    <ul>
+        <li>un ou plusieurs processus rédacteurs produisent des données, qu’ils insèrent à l’entrée du tube</li>
+        <li>à l’autre bout du tube, se trouvent des consommateurs, qui récupèrent les données en les lisant</li>
+        <li>entre les deux, l’espace de stockage est limité ; il y a blocage soit lorsque cet espace est vide pour la lecture, soit lorsqu’il est saturé pour l’écriture.</li>
+    </ul>
+    
+    <p>
+        La figure 3.3 schématise l’utilisation typique d’un tube avec un processus rédacteur et un processus lecteur ; mais il peut parfaitement y avoir plusieurs producteurs et plusieurs consommateurs, sans que la sémantique de fonctionnement du tube s’en trouve modifiée.
+    </p>
+    
+    <p>
+        Il existe deux sortes de tubes : les <strong><input type="text" id="trou77" placeholder="mot"></strong>, et les <strong><input type="text" id="trou78" placeholder="mot"></strong>. Dans les deux cas, il ne faut jamais oublier trois choses :
+    </p>
+    
+    <ul>
+        <li>Les tubes sont des objets uniques, donc partagés par les processus (il n’y pas duplication de tube lorsqu’un processus forké, par exemple). C’est justement ce qui fait d’eux des outils de communication entre processus.</li>
+        <li>La communication dans un tube est toujours <input type="text" id="trou79" placeholder="mot"> : de l’entrée du tube vers la sortie, et jamais l’inverse. Chercher à écrire dans la sortie d’un tube n’a pas beaucoup plus de sens que de lire en son entrée, et provoque en dans cas comme dans l’autre une erreur.</li>
+        <li>La quantité de mémoire disponible et allouée au stockage interne d’un tube est toujours limitée. Par défaut, elle est de <input type="text" id="trou80" placeholder="mot"> octets (4 KO) sur la plupart des systèmes.</li>
+    </ul>
+    
+    <h3>3.4.1 Les tubes anonymes</h3>
+    
+    <h4>Création et héritage</h4>
+    
+    <p>
+        Un tube anonyme est créé par la fonction système <code>pipe()</code>, dont le prototype est le suivant :
+    </p>
+    
+    <pre><code>#include &lt;unistd.h&gt;
+    
+    int pipe(int pipefd[2]);
+    </code></pre>
+    
+    <p>
+        La fonction attend en paramètre un <strong><input type="text" id="trou81" placeholder="mot"></strong> vers un tableau de deux entiers, qui, après création du tube, contiendront les descripteurs de fichiers de la TDF que le système aura retenus pour désigner l’entrée et la sortie du tube :
+    </p>
+    
+    <ul>
+        <li><code>filedes[1]</code> désigne l’<input type="text" id="trou82" placeholder="mot"></li>
+        <li><code>filedes[0]</code> désigne la <input type="text" id="trou83" placeholder="mot"></li>
+    </ul>
+    
+    <p>
+        Du point de vue des fichiers, créer un tube par un appel à <code>pipe()</code> équivaut à faire 2 appels à <code>open()</code> pour ouvrir l’entrée et la sortie du tube simultanément. L’entrée et la sortie se manipulent alors comme des fichiers ordinaires infinis, qui ont la particularité de ne pas avoir de pointeur de fichier (comme c’est le cas pour l’entrée standard, et la sortie standard). Un appel à <code>pipe()</code> en début de programme laissera typiquement les tables de fichiers dans l’état présenté en figure 3.4.
+    </p>
+    
+    <p>
+        L’inversion 1-0 pour désigner l’entrée-sortie est fondée sur un moyen mnémotechnique bien utile : 1 est à rapprocher de la <input type="text" id="trou84" placeholder="mot"> standard (sur laquelle on ne peut qu’écrire), et 0 de l’<input type="text" id="trou85" placeholder="mot"> standard (sur laquelle on ne peut que lire).
+    </p>
+    
+    <p>
+        Un tube anonyme est <strong><input type="text" id="trou86" placeholder="mot"></strong> lors d’un <code>fork()</code>, c-à-d que l’algorithme de duplication des entrées présenté au paragraphe 2.7 s’applique en l’état. Forker après avoir créé un tube résultera en un passage à 2 des compteurs de référence, et donnera la configuration de la figure 3.5. Remarquer que, comme déjà dit plus tôt, le tube lui-même n’est pas dupliqué, ce qui signifie que père et fils peuvent accéder tous les deux aux deux côtés du tube.
+    </p>
+    
+    <p>
+        La transmission des tubes anonymes par héritage est à double tranchant :
+    </p>
+    
+    <ul>
+        <li>d’un côté, on a l’inconvénient que le tube ne peut être accédé que par la <input type="text" id="trou87" placeholder="mot"> du processus qui l’a créé ;</li>
+        <li>mais d’un autre, cela empêche que n’importe quel processus puisse s’immiscer dans une communication qui ne le concerne pas, même si c’est par erreur qu’il le fait et non par intrusion.</li>
+    </ul>
+    <h4>Mise en œuvre élémentaire</h4>
+
+    <p>
+        Le programme présenté en listing 3.5 va nous permettre de mettre en lumière ce qui vient d’être dit. Il est des plus simples qui soient : après avoir créé un tube puis forké, le processus père se contente d’envoyer une chaîne de 19 caractères dans le tube. Cette chaîne est relue par le fils à l’autre bout du tube. Le programme n’a pas d’effet très spectaculaire :
+    </p>
+    
+    <pre><code>$ gcc -o pipe1 pipe1.c
+    $ ./pipe1
+    Fils a lu ’Salutation du père’
+    $</code></pre>
+    
+    <p>
+        mais il permet bien de valider qu’une chaîne, qui était inaccessible au fils, a transité d’un processus à l’autre. Remarquer également que le <code>sleep(1)</code> en ligne 12 permet d’assurer le caractère <input type="text" id="trou88" placeholder="mot"> de la lecture côté fils : le <code>read()</code> ne sort dans le fils qu’une fois le <code>write()</code> terminé dans le père.
+    </p>
+    
+    <h4>Transmission en continu</h4>
+    
+    <p>
+        On peut se demander dès lors comment modifier le programme 3.5 pour qu’il transmette des chaînes de caractères « en continu », et ce jusqu’à ce que le processus père termine. C’est ce que fait le programme du listing 3.6. Par rapport au programme précédent, on notera les différences remarquables suivantes :
+    </p>
+    
+    <ul>
+        <li>Le père lit en continu l’entrée standard (fichier <input type="text" id="trou89" placeholder="mot">). La lecture se fait en réalité ligne à ligne, et ce jusqu’à ce qu’elle soit fermée (par un Ctrl-D au clavier), ce qui conduira <code>read()</code> à retourner 0. Comme auparavant, la chaîne lue est recopiée sur l’entrée du tube.</li>
+        <li>Le fils fait lui aussi des lectures continues sur la sortie du tube. La boucle <code>while</code> s’arrête là encore lorsque <code>read()</code> renvoie <input type="text" id="trou90" placeholder="mot">, ce qui n’est possible que lorsque le tube est devenu inutilisable, parce que plus aucun processus ne peut écrire dedans.</li>
+        <li>C’est précisément la raison pour laquelle un <code>close(f[1])</code> a été fait à la ligne précédente. Si cet appel n’avait pas été fait, le compteur de référence <code><input type="text" id="trou91" placeholder="mot"></code> en TFO serait toujours resté à 1, car le fils a hérité d’un descripteur de fichier lors du fork, donc pourrait toujours écrire lui-même dans le tube. Supprimer l’appel à <code>close</code> conduirait le fils à bloquer, et attendre indéfiniment une donnée qui ne peut plus être envoyée que par lui ou sa descendance, et qui n’arrivera jamais.</li>
+    </ul>
+    
+    <p>
+        L’information essentielle à retenir est donc la suivante : un appel à <code>read()</code> sur une sortie de tube ne sortira avec une valeur de retour nulle qu’à la double condition i) qu’il n’y ait plus de données dans le tube, et ii) que le compteur de référence associé à cette entrée soit nul.
+    </p>
+    
+    <p>
+        Dans pareil cas, on dit que le tube est <span style="color: blue;"><input type="text" id="trou92" placeholder="mot"></span> (il a perdu sa moitié, et est devenu inutilisable). Voici une trace de l’exécution du programme :
+    </p>
+    
+    <pre><code>$ gcc -o pipe2 pipe2.c
+    $ ./pipe2
+    Père reprend la main: entrez votre texte
+    première chaîne
+    Fils a lu: première chaîne
+    deuxième chaîne
+    Père reprend la main: entrez votre texte
+    Fils a lu: deuxième chaîne
+    la dernière^D
+    Père reprend la main: entrez votre texte
+    Fils a lu: la dernière
+    Père meurt
+    Fils meurt.
+    $</code></pre>
+    
+    <h3>3.4.2 Les tubes nommés</h3>
+    
+    <p>
+        Ils obéissent eux aussi aux règles énoncées en paragraphe 3.4. Les tubes nommés fonctionnent de la manière que les tubes anonymes, sauf que :
+    </p>
+    
+    <ul>
+        <li>Ils sont implémentés sous forme de fichiers, donc sont des ressources <input type="text" id="trou93" placeholder="mot"> du système.</li>
+        <li>Une fonction spéciale est utilisée pour créer un tube anonyme sur disque, il s’agit de <code><input type="text" id="trou94" placeholder="mot"></code>.</li>
+        <li>Une fois créés, ils peuvent être ouverts grâce un simple appel à <code><input type="text" id="trou95" placeholder="mot"></code>.</li>
+        <li>On n’a pas besoin de distinguer explicitement la sortie et l’entrée d’un tube nommé. Lire sur un tube nommé suppose que l’on parle de sa <input type="text" id="trou96" placeholder="mot">, et y écrire suppose que l’on parle de son <input type="text" id="trou97" placeholder="mot">.</li>
+    </ul>
+    
+    <p>
+        Comme pour les tubes anonymes, l’usage des tubes nommés est aussi à double tranchant :
+    </p>
+    
+    <ul>
+        <li>d’un côté, on a la souplesse d’une ressource permanente sur disque, qui peut être accédée par n’importe quel processus sans besoin de lien de parenté avec le créateur</li>
+        <li>d’un autre côté, l’accès à un tube repose sur des droits fichiers, donc les risques d’intrusion et d’accès par erreur sont accrus.</li>
+    </ul>
+    
+    <h4>Créer un tube : la fonction mkfifo</h4>
+    
+    <pre><code>#include &lt;sys/types.h&gt;
+    #include &lt;sys/stat.h&gt;
+    
+    int mkfifo(const char *pathname, mode_t mode);
+    </code></pre>
+    
+    <p>
+        Cette fonction crée un fichier spécial sur disque de chemin <code>pathname</code>, avec les droits d’accès UGO spécifiés par <code>mode</code>. N’importe quel processus peut alors ouvrir le tube, et y écrire ou le lire, pourvu qu’il possède les droits appropriés. La fonction renvoie 0 en cas de succès, et une valeur négative en cas d’erreur.
+    </p>
+    
+    <p>
+        Signalons que cette fonction possède une commande shell homonyme qui fait exactement la même chose (remarquer le caractère ‘p’ indiqué par <code>ls</code> pour marquer le fichier spécial pipe) :
+    </p>
+    
+    <pre><code>$ mkfifo -m 600 /tmp/montube
+    $ ls -la /tmp/montube
+    prw------- 1 xavier xavier 0 août 17 16:28 /tmp/montube
+    $</code></pre>
+    
+    <h4>Mise en œuvre</h4>
+    
+    <p>
+        Nous reprenons le programme 3.6 de transmission de chaînes en continu, et le modifions pour qu’il utilise désormais un tube nommé. Nous obtenons le listing 3.7. Le comportement du programme est exactement le même :
+    </p>
+    
+    <pre><code>$ gcc -o pipe3 pipe3.c
+    $ ./pipe3
+    Père reprend la main: entrez votre texte
+    chaine 1
+    Père reprend la main: entrez votre texte
+    Fils a lu: chaine 1
+    chaine 2
+    Père reprend la main: entrez votre texte
+    Fils a lu: chaine 2
+    </code></pre>
+    
+    
+
+<button id="corrigerButton">Corriger</button>
+<p id="resultat"></p>
+
+
+<script>
+    window.onload = function() {
+        // Liaison du bouton à la fonction `corriger`
+        document.getElementById("corrigerButton").onclick = corriger;
+
+        function corriger() {
+            console.log("La fonction corriger a été appelée");
+
+            const reponsesCorrectes = [
+    "indépendante", "wait", "waitpid", "IPC", "Inter Process Communication",
+    "fichiers", "fichiers", "mémoire partagée", "signalisation", "fichier",
+    "mémoire", "plein", "message", "message", "plein", "echange", "while",
+    "absolument rien", "attente active", "signal", "BAL", "while", "synchronisation",
+    "IPC", "AT&T", "System V", "La mémoire partagée", "Les sémaphores", "Les files de messages",
+    "tubes", "verrous", "ressource mutex", "bloqué", "atomique", "même temps",
+    "flock", "flock", "LOCK_EX", "LOCK_UN", "O_RDWR", "O_WRONLY", "dup",
+    "usleep", "mémoire partagée", "MMU", "shmget", "identifiant", "rattacher",
+    "shmat", "UGO", "shmget", "shmflg", "IPC_PRIVATE", "IPC_CREAT", "IPC_EXCL",
+    "shmat", "shmdt", "shmat", "shmdt", "shmid", "SHM_RND", "SHMLBA", "SHM_RDONLY",
+    "SHM_PAGEABLE", "SHM_SHARE_MMU", "shmctl", "shmctl", "IPC_STAT", "IPC_SET",
+    "IPC_RMID", "tube", "entrée", "bloquante", "sortie", "bloquante", "FIFO",
+    "tubes anonymes", "tubes nommés", "unidirectionnelle", "4096", "pointeur",
+    "entrée", "sortie", "sortie", "entrée", "hérité", "descendance", "bloquant",
+    "0", "0", "cref", "veuf", "permanentes", "mkfifo()", "open()", "sortie", "entrée"
+]
+;
+
+            let score = 0;
+            let feedback = "<ul>";
+
+            // Boucle pour vérifier chaque réponse
+            for (let i = 1; i <= reponsesCorrectes.length; i++) {
+                let element = document.getElementById(`trou${i}`);
+                if (element) {
+                    if (element.value.toLowerCase() === reponsesCorrectes[i - 1]) {
+                        score++;
+                        feedback += `<li>Réponse ${i} : Correcte (${element.value})</li>`;
+                    } else {
+                        feedback += `<li>Réponse ${i} : Incorrecte (Votre réponse : ${element.value}, Réponse correcte : ${reponsesCorrectes[i - 1]})</li>`;
+                    }
+                } else {
+                    feedback += `<li>Réponse ${i} : Élément introuvable</li>`;
+                }
+            }
+
+            feedback += `</ul><p>Score total : ${score}/${reponsesCorrectes.length}</p>`;
+            document.getElementById("resultat").innerHTML = feedback;
+        }
+    };
+</script>
+
+</body>
+</html>

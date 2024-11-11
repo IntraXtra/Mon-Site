@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Partie 2 - ProgSys</title>
+</head>
+<body>
+
+<h2>2.1 Qu'est-ce qu'un fichier ?</h2>
+
+<p>
+    Historiquement, les fichiers ont servi à sauvegarder des informations, sous forme de séries d’octets,
+    de manière permanente, sur un support ou un autre (disque, streamer, ...). C’est ce que l’on appelle
+    conventionnellement les fichiers <input type="text" id="trou1" placeholder="mot">, et ces fichiers sont toujours d’actualité. Les opérations
+    standard les plus importantes offertes par Unix pour les manipuler sont :
+</p>
+
+<ul>
+    <li>l’ouverture (<code>open</code>), la fermeture (<code>close</code>), et la duplication de descripteurs de fichiers (<code>dup</code>, <code>dup2</code>)</li>
+    <li>le positionnement à un emplacement donné du fichier (<input type="text" id="trou2" placeholder="mot">)</li>
+    <li>la lecture (<code>read</code>), et l’écriture (<code>write</code>)</li>
+</ul>
+
+<p>
+    Toutefois, et parce que ces opérations étaient applicables à des objets ou à des périphériques
+    systèmes qui allaient bien au-delà des fichiers ordinaires, Unix a progressivement étendu leur spectre
+    d’application, tout en conservant la même notion de fichier et d’interface. De nos jours, un fichier
+    peut ainsi consister en :
+</p>
+
+<ul>
+    <li>Un moyen de communiquer directement avec un <input type="text" id="trou3" placeholder="mot"> :
+        <ul>
+            <li>soit <input type="text" id="trou4" placeholder="mot"> (exemple : <code>/dev/tty0</code> pour un terminal)</li>
+            <li>soit par bloc par bloc (exemple : <code>/dev/sda</code> pour accéder directement à un disque dur linéarisé, <code>/dev/ttap*</code> pour accéder directement à une interface réseau)</li>
+        </ul>
+    </li>
+    <li>Une <input type="text" id="trou5" placeholder="mot">.</li>
+    <li>Une socket de communication</li>
+    <li>Un moyen d’obtenir des informations en provenance du système (exemples : <code>/dev/random</code>)</li>
+    <li>Et même... <input type="text" id="trou6" placeholder="mot"> ! (<code>/dev/null</code>)</li>
+</ul>
+
+<p>L’ensemble des fichiers forme un arbre unique, rooté dans <code>/</code>.</p>
+
+<h2>2.2 Accès aux fichiers</h2>
+
+<p>
+    Unix vous permet d’accéder aux fichiers par l’intermédiaire de 3 tables, qui ne doivent surtout pas être confondues :
+    la table des <input type="text" id="trou7" placeholder="mot"> en mémoire centrale, la table des <input type="text" id="trou8" placeholder="mot"> ouverts, et la table des <input type="text" id="trou9" placeholder="mot"> de fichiers.
+</p>
+
+
+<h3>2.2.1 Table des inodes (TI)</h3>
+<p>
+    Un <a href="#">inode</a>, pour index node, est une structure de données contenant les informations système sur
+    un fichier, ce qui inclut (liste non exhaustive) :
+</p>
+<ul>
+    <li>Numéro d’inode (<input type="text" id="trou10" placeholder="mot">)</li>
+    <li>Référence et type du périphérique (fichier <input type="text" id="trou11" placeholder="mot">, bloc, répertoire, lien symbolique, tube, fifo (tube), socket)</li>
+    <li><input type="text" id="trou12" placeholder="mot"> et <input type="text" id="trou13" placeholder="mot"> du propriétaire</li>
+    <li><input type="text" id="trou14" placeholder="mot"> en octets</li>
+    <li><input type="text" id="trou15" placeholder="mot"> d’accès</li>
+    <li>Horodatages (création, dernière consultation, dernière modification)</li>
+    <li>Le <strong>compteur de liens</strong> = entier qui compte combien de fois l’inode est référencé dans l’arborescence à l’inode par l’intermédiaire de la commande <input type="text" id="trou16" placeholder="mot"> (link)</li>
+    <li>La liste des <input type="text" id="trou17" placeholder="mot"> disque du fichier, ou du moins un pointeur vers le premier d’entre eux (dépend du système de fichiers utilisé)</li>
+</ul>
+<p>
+    Les inodes sont présents sur disque, mais pour des raisons de performances, le système les charge
+    en mémoire centrale dans la mesure du possible, formant ainsi la <strong>table des <input type="text" id="trou18" placeholder="mot"></strong>. Cette table est unique.
+</p>
+
+<h3>2.2.2 Table des fichiers ouverts (TFO)</h3>
+<p>
+    Chaque fois qu’un processus fait appel à la fonction <code>open</code> pour ouvrir un fichier, il crée une nouvelle
+    entrée dans la <strong>table des <input type="text" id="trou19" placeholder="mot"></strong>. Cette table système est unique, et chacune de ses entrées
+    contient (entre autres) les informations suivantes :
+</p>
+<ul>
+    <li>Le <input type="text" id="trou20" placeholder="mot"> d’accès transmis à <code>open</code> pour l’ouverture</li>
+    <li>Le mode d’accès au fichier (lecture seule, écriture seule, lecture/écriture)</li>
+    <li>Un pointeur vers l’inode correspondant dans la table des inodes en mémoire</li>
+    <li>Le <strong>pointeur de fichier</strong> : il s’agit d’un entier qui indique à partir d’où la prochaine lecture ou écriture devra avoir lieu. Le pointeur de fichier existe toujours pour les fichiers ordinaires, mais ce n’est pas toujours le cas pour d’autres fichiers (tubes, sockets, FIFO, et la plupart des périphériques caractère)</li>
+    <li>Un <strong>compteur de <input type="text" id="trou21" placeholder="mot"></strong> = entier qui compte combien de descripteurs de fichiers (voir paragraphe suivant) font référence à cette entrée. Initialisé à 1 lors du tout premier appel à <code>open()</code>.</li>
+</ul>
+<p>
+    Le dernier champ (<input type="text" id="trou22" placeholder="mot">) joue un rôle très important dans le maniement des tubes.
+    Son fonctionnement est assez subtil, et est influencé par <code>open</code>, <code>dup</code>, <code>close</code>, mais aussi <code>fork</code>.
+    Nous reviendrons sur ce point lorsque ces fonctions seront passées en revue, l’effet de <code>fork</code> étant
+    expliqué en paragraphe 2.7.
+</p>
+
+<h3>2.2.3 Table des descripteurs de fichiers (TDF)</h3>
+<p>
+    Lorsque la fonction <code>open</code> a ouvert un fichier avec succès, elle renvoie un entier appelé <strong>descripteur
+    de fichier</strong>, et elle crée une entrée dans une table qui les rassemble tous, qui est propre à chaque processus.
+    Cette table est appelée <strong>table des <input type="text" id="trou23" placeholder="mot"></strong>, et ne doit surtout pas être confondue
+    avec la table des fichiers ouverts.
+</p>
+<p>
+    Comme nous l’avons mentionné au chapitre 1, la table des descripteurs de fichiers est stockée dans
+    la struct U du processus, son nombre d’entrées est de fait généralement limité (typiquement, 32). Les
+    entrées de cette table ne possèdent que très peu d’informations :
+</p>
+<ul>
+    <li>Un <input type="text" id="trou24" placeholder="mot">, qui indique si oui ou non l’entrée est disponible</li>
+    <li>Un pointeur vers l’entrée correspondante dans la table des fichiers ouverts</li>
+    <li>Par défaut, les trois premières entrées (0 à 2 inclus) de cette table sont toujours réservées par le système, et associées respectivement à l’entrée standard (0), la sortie standard (1), et la sortie d’erreur standard (2).</li>
+</ul>
+
+
+<h2>2.3 Vue d’ensemble</h2>
+<p>
+    Il est primordial de bien comprendre comment le système gère l’accès aux fichiers en mémoire
+    avant d’examiner en détail les fonctions de manipulation de ces fichiers.
+</p>
+<p>
+    La figure 2.1 illustre tous les cas possibles à partir de 3 fichiers (<code>/tmp/toto</code>, <code>/tmp/titi</code>, et <code>/tmp/tata</code>), qui vont être ouverts par 4 processus différents. Voici ce qui est supposé se passer, dans l’ordre :
+</p>
+<ul>
+    <li>
+        Un premier processus A appelle <code>open("/tmp/toto")</code> pour ouvrir <code>/tmp/toto</code>. Il ne fait rien d’autre. On se retrouve avec une nouvelle entrée dans la TFO (la <input type="text" id="trou25" placeholder="mot">), le compteur de référence (<code>cref</code>) est à <input type="text" id="trou26" placeholder="mot">, le pointeur de fichier (<code>pfic</code>) est au début de fichier, donc à <input type="text" id="trou27" placeholder="mot">, et l’inode correspondant à <code>/tmp/toto</code> est le <input type="text" id="trou28" placeholder="mot">.
+    </li>
+    <li>
+        Un deuxième processus B fait de même pour ouvrir <code>/tmp/titi</code>. En ouvrant ce fichier une première fois, il initialise le pointeur de fichier à 0 et le compteur de référence à 1. En ouvrant une seconde fois le même fichier, le pointeur de fichier pour ce deuxième appel est lui aussi à 0, mais le compteur de référence est à <input type="text" id="trou29" placeholder="mot">.
+    </li>
+    <li>
+        Un troisième processus ouvre <code>/tmp/titi</code>, puis écrit <input type="text" id="trou30" placeholder="mot"> octets dans ce fichier à partir du descripteur qu’il a reçu. Puis, il <em>fork</em>. Résultat :
+        <ul>
+            <li>Le compteur de référence de l’entrée <input type="text" id="trou31" placeholder="mot"> de la TFO passe à 2</li>
+            <li>Que ce soit le père ou le fils qui écrive, les écritures se feront à la suite, il n’y a aucun écrasement du fait que le pointeur de fichier est partagé</li>
+            <li>La règle vaut toujours si l’un et l’autre écrivent à la suite, sans déplacer le pointeur.</li>
+        </ul>
+    </li>
+</ul>
+
+<h2>2.4 Fonctions d’ouverture, écriture, lecture, et fermeture</h2>
+<p>Nous détaillons à présent ces quatre fonctions, qui sont respectivement <code>open</code>, <code>write</code>, <code>read</code>, et <code>close</code>.</p>
+
+<h3>2.4.1 La fonction open</h3>
+<pre><code>#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+
+int open(const char *pathname, int flags);
+int open(const char *pathname, int flags, mode_t mode);
+</code></pre>
+<p>
+    Elle ouvre le fichier de chemin <code>pathname</code>, avec les drapeaux spécifiés par <code>flags</code>. Ces derniers modifient la manière dont l’ouverture doit être faite. Les constantes suivantes sont des puissances de 2, et définissent donc chacune un bit de l’entier <code>flags</code> :
+</p>
+<table>
+    <tr><th>Valeur</th><th>Signification</th></tr>
+    <tr><td><code>O_CREAT</code></td><td>Si le fichier n’existe pas, il doit être créé en utilisant les droits spécifiés dans <code><input type="text" id="trou32" placeholder="mot"></code></td></tr>
+    <tr><td><code>O_TRUNC</code></td><td>Si le fichier existe, il doit être <input type="text" id="trou33" placeholder="mot"></td></tr>
+    <tr><td><code>O_EXCL</code></td><td>Erreur si fichier existe déjà</td></tr>
+    <tr><td><code>O_RDONLY</code></td><td>Ouverture en <input type="text" id="trou34" placeholder="mot"></td></tr>
+    <tr><td><code>O_WRONLY</code></td><td>Ouverture en écriture seule</td></tr>
+    <tr><td><code>O_RDWR</code></td><td>Ouverture en lecture et écriture</td></tr>
+    <tr><td><code>O_APPEND</code></td><td>Ouverture en ajout, c-à-d écriture avec pointeur déplacé en fin de fichier.</td></tr>
+</table>
+
+
+<p>
+    Remarquons que <code>mode</code> n’a de sens que si le bit <code>O_CREAT</code> est positionné, raison pour laquelle la
+    fonction est <input type="text" id="trou35" placeholder="mot"> ou <input type="text" id="trou36" placeholder="mot"> paramètres. Si tel est le cas, alors la valeur du 3ème paramètre spécifie les droits
+    UGO à utiliser en <strong>base <input type="text" id="trou37" placeholder="mot"></strong>. Par exemple,
+</p>
+<pre><code>int fd = open("/tmp/monfichier", O_CREAT | O_RDWR, 0644);
+</code></pre>
+<p>
+    créera <code>/tmp/monfichier</code> s’il n’existe pas déjà, et lui attribuera les droits <input type="text" id="trou38" placeholder="mot"> = rw-r–r-x, donc accès
+    en lecture/écriture pour l’utilisateur (U), lecture seule pour le groupe (G), lecture seule et exécution
+    pour les autres (O).
+</p>
+<p>
+    La fonction <code>open</code> retourne :
+</p>
+<ul>
+    <li>Soit un nouveau numéro de <input type="text" id="trou39" placeholder="mot"> alloué dans la TDF du processus appelant, et qui est
+        associé à l’ouverture. Ce descripteur de fichier sera le seul moyen de savoir de quelle ouverture
+        et de quel fichier on parle pour les fonctions <code>read</code> et <code>write</code>.
+    </li>
+    <li>Soit une valeur &lt; 0 en cas d’erreur (causes les plus fréquentes : fichier inexistant, droits d’accès
+        insuffisants, trop de fichiers ouverts) et la variable <code><input type="text" id="trou40" placeholder="mot"></code> contient un code ad hoc.
+    </li>
+</ul>
+<p>
+    <strong>Remarque importante</strong> : même si Unix n’offre pas de garantie formelle sur ce point, le descripteur de
+    fichier retourné par <code>open()</code> correspond en principe à la première entrée libre dans la
+    TDF.
+</p>
+
+<h3>2.4.2 La fonction write</h3>
+<pre><code>#include &lt;unistd.h&gt;
+
+ssize_t write(int fd, const void *buf, size_t count);
+</code></pre>
+<p>
+    Elle tente d’écrire les <input type="text" id="trou41" placeholder="mot"> octets qu’est supposée contenir la zone mémoire pointée par <code>buf</code> vers le fichier de descripteur <code>fd</code> préalablement ouvert par <code>open</code>, et renvoie soit le nombre d’octets qui ont effectivement été écrits sur disque, soit une valeur négative en cas d’erreur (et la variable <code>errno</code> contient un code ad hoc le cas échéant).
+</p>
+
+<p>
+    Il convient d’insister lourdement sur « <input type="text" id="trou42" placeholder="mot"> » : même si la zone mémoire que vous avez désignée
+    est valide, et même si vous ne pouvez toujours écrire sur disque parce que votre quota disque n’a pas
+    encore été atteint (c’est une cause d’erreur possible), rien ne vous garantit que le système parviendra
+    à tout écrire en un seul appel si <code>count</code> est suffisamment élevé, pour la simple raison que les appels
+    systèmes de l’utilisateur peuvent être interrompus pour traiter un événement de plus haute priorité.
+    Ceci sera expliqué en détail dans le chapitre 3 sur les signaux.
+</p>
+<p>
+    Toutefois, des valeurs de <code>count</code> inférieures ou égales à <input type="text" id="trou43" placeholder="mot"> garantissent des écritures
+    sans interruption. La même règle vaut pour la lecture. Cette propriété est connue sous le nom de
+    <strong>principe d’<input type="text" id="trou44" placeholder="mot"></strong> sous UNIX. À titre d’exemple, le listing 2.1 montre la bonne manière d’écrire
+    une zone mémoire sur un fichier, après l’avoir ouvert.
+</p>
+<p>
+    La fonction <code>write</code> peut être bloquante, c-à-d qu’écrire sur un descripteur de fichier qui conduit à
+    un périphérique ou à un objet système saturé peut conduire le système à faire basculer le processus
+    appelant à l’état bloqué, et ce jusqu’à ce que de la place soit libérée sur le périphérique ou l’objet en
+    question. Ceci vaut surtout pour les <input type="text" id="trou45" placeholder="mot"> anonymes (présentés au chapitre 3). Le fait qu’un fichier
+    soit bloquant en écriture ou non dépend complètement de sa nature, et est contrôlé par <code>fcntl()</code>. Les
+    fichiers ordinaires ne sont <strong>jamais</strong> bloquants en écriture.
+</p>
+
+<h3>2.4.3 La fonction read</h3>
+<pre><code>#include &lt;unistd.h&gt;
+
+ssize_t read(int fd, void *buf, size_t count);
+</code></pre>
+<p>
+    Par opposition à <code>write</code>, mais tout en suivant une logique similaire, elle <em><input type="text" id="trou46" placeholder="mot"></em> de lire <code>count</code> octets
+    à partir du descripteur de fichier <code>fd</code> préalablement ouvert par <code>open</code>, et de les transférer vers la zone
+    mémoire pointée par <code>buf</code>. La fonction retourne :
+</p>
+<ul>
+    <li>soit le nombre d’octets qu’elle a effectivement lus et transférés vers la zone mémoire pointée
+        par <code>buf</code>,
+    </li>
+    <li>soit <input type="text" id="trou47" placeholder="mot">, ce qui indique qu’il n’y a plus de données à lire à partir du fichier</li>
+    <li>soit une valeur &lt; 0, et la variable <code>errno</code> contient un code ad hoc le cas échéant.</li>
+</ul>
+
+<p>
+    Tout comme <code>write</code>, elle peut être interrompue par un <input type="text" id="trou48" placeholder="mot">, sauf si <code>count &le; 512</code> en vertu du
+    principe d’atomicité. Elle peut également être bloquante, ce qui se produit naturellement sur certains
+    types de fichiers ou leur périphériques associés (les <input type="text" id="trou49" placeholder="mot">, les <input type="text" id="trou50" placeholder="mot"> de communication, l’entrée
+    standard, les terminaux, les lignes séries).
+</p>
+
+<h3>2.4.4 La fonction close</h3>
+<pre><code>#include &lt;unistd.h&gt;
+
+int close(int fd);
+</code></pre>
+<p>
+    Elle libère le descripteur de fichier <code>fd</code> dans la TDF du processus appelant. Le compteur de <input type="text" id="trou51" placeholder="mot">
+    dans la TFO est décrémenté, et s’il passe à zéro, le fichier est effectivement fermé (avec écriture
+    sur périphérique en cas de mise en antémémoire) et disparaît aussi de la TFO, puisqu’il n’est plus
+    utilisé par personne.
+</p>
+<p>
+    La fonction renvoie soit 0 en cas de succès, soit une valeur négative, et la variable <code>errno</code> contient
+    un code d’erreur le cas échéant.
+</p>
+<p>
+    À défaut d’avoir été faites explicitement, les appels à <code>close</code> sont toujours faits par le système
+    lorsqu’un processus termine (d’une manière ou d’une autre).
+</p>
+
+<h3>2.4.5 La fonction lseek</h3>
+<pre><code>#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+
+off_t lseek(int fd, off_t offset, int whence);
+</code></pre>
+<p>
+    Sous réserve qu’il existe, elle déplace le <input type="text" id="trou52" placeholder="mot"> de fichier de descripteur <code>fd</code> de <code>offset</code> octets :
+</p>
+<ul>
+    <li>Soit à partir du début du fichier si <code>whence</code> vaut <code>SEEK_SET</code></li>
+    <li>Soit à partir de la fin du fichier si <code>whence</code> vaut <code>SEEK_END</code></li>
+    <li>Soit à partir de la position courante du pointeur si <code>whence</code> vaut <code>SEEK_CUR</code></li>
+</ul>
+<p>
+    Du fait qu’il soit possible de faire référence à la position courante du pointeur avec <code>SEEK_SET</code>, il
+    résulte que <code>offset</code> est un entier <input type="text" id="trou53" placeholder="mot"> : &gt; 0 pour un déplacement en avant du pointeur de fichier, &lt; 0
+    dans le cas contraire.
+</p>
+<p>
+    La fonction renvoie toujours la position du pointeur de fichier après son déplacement par rapport
+    au début du fichier.
+</p>
+<p>
+    Les effets de <code>lseek</code> dépendent non seulement de l’existence ou non d’un pointeur associé au fichier
+    ouvert, mais aussi de la possibilité de déplacer ce pointeur, et des conséquences que cela sous-entend.
+    Ainsi, appeler <code>lseek</code> résultera en une erreur :
+</p>
+<ul>
+    <li>si le fichier ne possède pas de pointeur de fichier, ou s’il en possède un mais qu’il pointe toujours
+        en fin et n’est qui non <input type="text" id="trou54" placeholder="mot"> (ex : <code>stdin</code>, <code>stdout</code>, fichier de port série <code>/dev/ttyS*</code>)
+    </li>
+    <li>si le <code>fd</code> est en lecture, mais qu’il est ouvert en lecture seule, et que le déplacement demandé va
+        au-delà de ses <input type="text" id="trou55" placeholder="mot">
+    </li>
+</ul>
+
+<p>
+    À l’inverse, appeler <code>lseek</code> sur un fichier ordinaire ouvert en écriture, avec une valeur de déplacement
+    amenant le pointeur au-delà de sa <input type="text" id="trou56" placeholder="mot">, aura pour effet de l’agrandir. Par exemple, les lignes
+    suivantes :
+</p>
+<pre><code>int f=open("toto", O_TRUNC | O_CREAT | O_WRONLY, 0644);
+lseek(f, 2000, SEEK_SET);
+close(f);
+</code></pre>
+<p>
+    auront pour effet de créer un fichier <code>toto</code> de 2000 octets sur disque, au contenu parfaitement
+    <input type="text" id="trou57" placeholder="mot">. Mais ce fichier existera bien, et sera long de 2000 octets une fois le <code>close(f)</code> fait.
+</p>
+
+<h2>2.5 Les redirections</h2>
+
+<h3>2.5.1 Introduction</h3>
+<p>
+    Qui n’a jamais lancé une ligne de la forme
+</p>
+<pre><code>ls -laR / &gt; /tmp/liste</code></pre>
+<p>
+    à partir d’un shell ? Nous allons utiliser cet exemple pour illustrer ce qui se passe en détail au
+    niveau système, avec un soin particulier pour le <code>/tmp/liste</code>, c’est à dire comment Unix traite les
+    <a href="#redirections">redirections</a>.
+</p>
+<p>
+    Un examen des sources de la commande <code>ls</code> vous apprendra que, comme beaucoup de commandes,
+    elle fait des appels à <code>printf()</code>. Rien de bien extraordinaire jusqu’ici, mais sauf si vous connaissez
+    déjà le contenu de ce chapitre, l’information nouvelle pour vous devrait être que <code>printf()</code> fait elle-même
+    des appels à <code>write(1, ... , ...)</code>, autrement dit écrit sur le fichier de descripteur 1, qui est
+    toujours ouvert par défaut par le système, et désigne la <input type="text" id="trou58" placeholder="mot"> standard.
+</p>
+<p>
+    Nous ne pouvons donc pas changer le comportement de <code>ls</code>, qui fera invariablement ses appels à
+    <code>write(1, ... , ...)</code>, peu importe ce qu’elle écrit. Comment faire en sorte que 1 ne soit plus la sortie
+    standard, mais le fichier <code>/tmp/liste</code> ? Tout simplement en jouant sur le fait que la TDF peut associer
+    au fichier 1 un autre fichier que celui ouvert par défaut par le système pour la sortie standard.
+</p>
+<p>
+    Au paragraphe 2.4.1, nous avons dit que <code>open()</code> renvoyait en principe le premier descripteur
+    libre dans la TDF. Si nous avons fermé 1 avant d’appeler <code>open("/tmp/liste")</code>, et que 0 (l’entrée
+    standard) est toujours ouverte, <code>open()</code> devrait normalement nous renvoyer 1, donc le descripteur 1
+    de la TDF mènerait à <code>/tmp/toto</code>, et le tour serait joué. Le shell pourrait donc procéder ainsi :
+</p>
+<ol>
+    <li>Forker, ce qui permettra à son fils d’hériter des <input type="text" id="trou59" placeholder="mot"> de fichiers 0 à 3</li>
+    <li>Le fils ferme 1</li>
+    <li>Le fils ouvre <code>/tmp/liste</code> en écriture seule</li>
+    <li>Le fils fait un <code>execlp</code> sur <code>ls</code></li>
+    <li>Le père (shell) ne fait rien de particulier pendant ce temps, il se contente d’attendre la mort
+        de son fils.
+    </li>
+</ol>
+<p>
+    C’est une solution possible, mais elle présente un danger : si 0 a été fermée, elle ne fonctionnera
+    pas. En réalité, le shell va faire presque la même chose, mais désignera le descripteur 1 à travers la
+    fonction <code>dup2()</code> présentée ci-après, de façon à ne laisser aucun doute possible sur le descripteur à
+    utiliser.
+</p>
+<p>
+    <strong>Néanmoins, le principe de redirection par fermeture de fichiers et substitution d’entrées dans la TDF que
+    nous venons d’illustrer, reste exactement le même avec <code>dup2</code></strong>. Il vaut
+    aussi bien en écriture (&gt; <code>/tmp/liste</code>) sur 1, qu’en lecture (&lt; <code>/tmp/liste</code>) à partir de 0, que pour
+    n’importe quel autre canal d’entrée ou sortie.
+</p>
+<p>
+    Cette fonction recopie l’entrée numéro <code>oldfd</code> de la TDF du processus appelant dans la <em>première
+    entrée <input type="text" id="trou60" placeholder="mot"></em> qu’elle trouve dans la TDF, et renvoie le numéro de cette nouvelle entrée en valeur de
+    retour. S’il n’y a plus de place dans la TDF, elle renvoie une valeur négative.
+</p>
+<p>
+    Une fois la recopie faite, le compteur de <input type="text" id="trou61" placeholder="mot"> du fichier auquel <code>oldfd</code> conduit dans la TFO
+    est <em>incrémenté</em>. Les deux lignes suivantes
+</p>
+<pre><code>int f= open("/tmp/toto", O_RDWR);
+int g= dup(f);
+</code></pre>
+<p>
+    produisent une configuration semblable à celle de la figure 2.1, sous réserve que <code>/tmp/toto</code> existe
+    bien. Que l’on utilise alors <code>f</code> ou <code>g</code> pour lire, écrire, ou déplacer le pointeur de fichier, cela reviendra
+    exactement au même, puisque le fichier ouvert auxquels ces deux descripteurs conduisent est en fait
+    le même.
+</p>
+
+<h3>2.5.3 La fonction dup2()</h3>
+<pre><code>#include &lt;unistd.h&gt;
+
+int dup2(int oldfd, newfd);
+</code></pre>
+<p>
+    Cette fonction fait la même chose que <code>dup</code>, sauf qu’elle réalise la copie vers le descripteur <input type="text" id="trou62" placeholder="mot">
+    (et pas un autre) spécifié au lieu d’utiliser la première entrée libre qu’elle trouve dans la TDF. Si
+    l’entrée <input type="text" id="trou63" placeholder="mot"> n’est pas libre, <code>dup2()</code> la ferme d’abord par un <code>close(newfd)</code> avant de réaliser la
+    copie. La valeur retournée est soit <input type="text" id="trou64" placeholder="mot"> en cas de succès, soit une valeur négative en cas d’erreur.
+</p>
+<p>
+    À titre d’exemple, voici le code que l’on pourrait adopter pour la redirection <code>ls -laR / &gt;
+    /tmp/liste</code> du paragraphe 2.5.1 :
+</p>
+<pre><code>if (fork() == 0) {
+    int f= open("/tmp/liste", O_CREAT | O_TRUNC | O_WRONLY, 0644);
+    dup2(f,1);
+    close(f);
+    execlp("ls", "ls", "-laR", "/", NULL);
+    exit(255); /* erreur */
+}
+wait(NULL);
+</code></pre>
+<p>
+    À comparer avec le code du listing 2.2. Remarquer que le <code>close(f)</code> en ligne 5 a simplement
+    vocation à laisser une <input type="text" id="trou65" placeholder="mot"> de plus dans la TDF de <code>ls</code>, mais ne participe pas au mécanisme de
+    redirection.
+</p>
+<p>
+    La Figure 2.2 illustre le code du listing 2.3 étape par étape :
+</p>
+<ol>
+    <li>Initialement, l’entrée 0 de la TDF conduit au clavier, les entrées 1 et 2 vers l’écran.</li>
+    <li>Étape a = ligne 2 du code : <code>open</code> crée <code>/tmp/toto</code>, et l’associe à une nouvelle entrée dans la
+        TFO, et l’associe à l’entrée 3 de la TDF du processus. Noter que <input type="text" id="trou66" placeholder="mot"> au retour de la fonction.
+    </li>
+    <li>Étapes b et c = ligne 4 du code : <code>dup2(3,1)</code> a deux effets : fermer l’entrée 1 de la TDF (étape
+        b), puis recopier l’entrée 3 de la TDF vers l’entrée 1 (étape c). En résultat, les <input type="text" id="trou67" placeholder="mot">
+        1 et 3 conduisent toutes les deux à <code>/tmp/toto</code>.
+    </li>
+    <li>Étape d = ligne 5 du <code>close : close(3)</code> libère l’entrée 3 de la TDF (on n’en a plus besoin).</li>
+</ol>
+
+<h3>2.6 La fonction fcntl()</h3>
+<pre><code>#include &lt;unistd.h&gt;
+#include &lt;fcntl.h&gt;
+
+int fcntl(int fd, int cmd, ... /* arg */ );
+</code></pre>
+<p>
+    Il s’agit d’une fonction « <input type="text" id="trou68" placeholder="mot"> Suisse », qui permet de réaliser l’opérations (<code>cmd</code>, d’argument(s)
+    éventuel(s) <code>arg...</code>, sur le descripteur de fichier <code>fd</code>. Elle est <strong>très <input type="text" id="trou69" placeholder="mot"></strong> du système.
+</p>
+<p>
+    Les opérations que l’on peut réaliser sont très diverses. En voici quelques unes sur BSD 4.4 :
+</p>
+<ul>
+    <li><code>F_GETFL</code> et <code>F_SETFL</code> : lit ou positionne les <input type="text" id="trou70" placeholder="mot"> d’état du fichier, qui peuvent consister en
+        une combinaison par OU arithmétique de
+        <ul>
+            <li><code>O_NONBLOCK</code> : les lectures ou écritures deviennent non bloquantes</li>
+            <li><code>O_APPEND</code> : les écritures se font en fin de fichier</li>
+            <li><code>O_ASYNC</code> : envoie un <input type="text" id="trou71" placeholder="mot"> SIGIO au processus appelant lorsque les données deviennent à
+                nouveau disponible (voir chapitre 3 sur les signaux)
+            </li>
+        </ul>
+    </li>
+    <li><code>F_GETOWN</code> et <code>F_SETOWN</code> : lit ou positionne le <input type="text" id="trou72" placeholder="mot"> du processus qui doit recevoir les signaux
+        SIGIO
+    </li>
+    <li><code>F_GETLK</code> et <code>F_SETLK</code> : lit l’état, ou positionne un <input type="text" id="trou73" placeholder="mot"> sur le descripteur de fichier <code>fd</code> pour
+        un accès exclusif. Cette commande est similaire à <code>flock()</code>, détaillée dans le chapitre 3.
+    </li>
+</ul>
+
+<h3>2.7 Effet de fork sur les fichiers</h3>
+<p>
+    Nous terminons ce chapitre par un paragraphe court, mais d’importance. Dans l’exemple de la
+    figure 2.1, nous avons supposé que le dernier processus (C) forkait après avoir ouvert un fichier. Nous
+    avons alors dit que le compteur de <input type="text" id="trou74" placeholder="mot"> <code>cref</code> passait à 2 dans la TFO pour l’entrée 31.
+</p>
+<p>
+    Quelle est la règle générale ? Le compteur <code>cref</code> doit toujours refléter le nombre de <input type="text" id="trou75" placeholder="mot"> qui désignent
+    l’entrée de la TFO dans lequel il se trouve. Par conséquent, <code>fork()</code> ne peut pas se contenter d’une recopie
+    en mémoire du processus forké. Elle doit également faire, après la recopie et seulement dans le code
+    du fils, une boucle pour mettre ce compteur à jour, et qui ressemble à ceci :
+</p>
+<pre><code>pour toutes les entrées i de la TDF faire
+    si TDF[i].tfo est associé à un fichier en TFO alors
+        TFO[TDF[i].tfo].cref++;
+fin si
+</code></pre>
+<p>
+    <code>int f= open("/tmp/toto", O_RDONLY);<br>
+    int g= open("/tmp/toto", O_RDONLY);<br>
+    int h= open("/tmp/titi", O_RDONLY);<br>
+    int i= dup(h);<br>
+    fork();
+    </code>
+</p>
+<p>
+    Avant <code>fork()</code>, les compteurs <code>cref</code> sont à 1 et 2 pour les entrées 12 et 21. Ils passent à 2 et 4
+    après <code>fork()</code>. Cette mise à jour est vitale pour les tubes anonymes, car, comme nous le verrons au
+    chapitre 3, un compteur de <input type="text" id="trou76" placeholder="mot"> à 0 à l’entrée d’un tube anonyme est le seul moyen de savoir qu’il est
+    inutilisable (n’étant plus associé à aucun processus, plus personne ne peut écrire dedans).
+</p>
+
+
+
+<button id="corrigerButton">Corriger</button>
+<p id="resultat"></p>
+
+
+<script>
+    window.onload = function() {
+        // Liaison du bouton à la fonction `corriger`
+        document.getElementById("corrigerButton").onclick = corriger;
+
+        function corriger() {
+            console.log("La fonction corriger a été appelée");
+
+            const reponsesCorrectes = [
+    "ordinaires", "lseek", "périphérique", "caractère par caractère", "voie de communication", "rien", 
+    "inodes", "fichiers", "descripteurs","unique","caractère", "UID", "GID", "Taille", "Droits", "ln", "blocs", 
+    "inodes", "fichiers ouverts", "chemin", "références", "références", "compteur de références",
+    "descripteurs de fichiers", "drapeau", "12", "1", "0", "234", "2", "3", "31", 
+    "mode", "vidé", "lecture seule", "2", "3", "octale", "0645", "descripteur", 
+    "errno", "count", "tente", "512", "atomicité", "tubes", "tente", "0", 
+    "signal", "tubes", "sockets", "références", "pointeur", "signé", "déplacable", 
+    "limites", "taille", "indéterminé", "sortie", "descripteurs", "libre", "références", 
+    "newfd", "newfd", "newfd", "entrée", "f=3", "descripteurs", "couteau", 
+    "dépendante", "drapeaux", "signal", "PID", "verrou", "références", 
+    "descripteurs", "lien"
+                        ];
+
+            let score = 0;
+            let feedback = "<ul>";
+
+            // Boucle pour vérifier chaque réponse
+            for (let i = 1; i <= reponsesCorrectes.length; i++) {
+                let element = document.getElementById(`trou${i}`);
+                if (element) {
+                    if (element.value.toLowerCase() === reponsesCorrectes[i - 1]) {
+                        score++;
+                        feedback += `<li>Réponse ${i} : Correcte (${element.value})</li>`;
+                    } else {
+                        feedback += `<li>Réponse ${i} : Incorrecte (Votre réponse : ${element.value}, Réponse correcte : ${reponsesCorrectes[i - 1]})</li>`;
+                    }
+                } else {
+                    feedback += `<li>Réponse ${i} : Élément introuvable</li>`;
+                }
+            }
+
+            feedback += `</ul><p>Score total : ${score}/${reponsesCorrectes.length}</p>`;
+            document.getElementById("resultat").innerHTML = feedback;
+        }
+    };
+</script>
+
+</body>
+</html>

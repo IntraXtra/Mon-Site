@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Texte à Trous</title>
+</head>
+<body>
+
+<h2>Partie 1 : Processus - Programmation Système</h2>
+
+<p>Un processus est une unité d'<input type="text" id="trou1" placeholder="mot">, c’est-à-dire un ensemble unifié en <input type="text" id="trou2" placeholder="mot"> centrale formé :</p>
+<ul>
+    <li>de <input type="text" id="trou3" placeholder="mot"> exécutable : c’est le code machine exécuté par le processeur. Ce code n’est accessible qu’en lecture seule, car stocké dans un segment appelé <input type="text" id="trou4" placeholder="mot">, qui en interdit matériellement la modification.</li>
+    <li>de <input type="text" id="trou5" placeholder="mot"> utilisateur : il s’agit de l’ensemble des données initialisées, accessibles et modifiables par l’utilisateur.</li>
+</ul>
+<p>Cette zone comprend les variables initialisées du programme, mais pas seulement : elle est en effet à "géométrie variable", puisqu’elle contient aussi :</p>
+<ul>
+    <li>le <input type="text" id="trou6" placeholder="mot"> d’allocation dynamique : il s’agit des segments de mémoire alloués par malloc().</li>
+    <li>la <input type="text" id="trou7" placeholder="mot"> utilisateur : c’est elle qui contient les variables de la classe C auto, et les pointeurs de code sauvegardés lors des appels de fonction utilisateur.</li>
+    <li>la <input type="text" id="trou8" placeholder="mot"> système : si le système supporte la séparation des piles, elle contiendra la même chose, mais pour les appels réalisés par le système seulement.</li>
+</ul>
+
+<p>Une zone mémoire appelée <input type="text" id="trou9" placeholder="mot">, ou Process Control Block (PCB), contient les informations vitales au processus, et qui n’est jamais swappée (= échangée sur disque par le gestionnaire de mémoire virtuelle).</p>
+
+<p>Une notion fondamentale liée aux processus est celle de l'<input type="text" id="trou10" placeholder="mot"> : un processus donné ne peut ni exécuter, ni accéder aux données d’un autre.</p>
+
+<p>
+    Sur UNIX, les processus possèdent un identifiant unique, appelé <input type="text" id="trou11" placeholder="mot">, ou PID. Cet identifiant est de type C pid_t, qui est assimilable à un type entier signé sur <input type="text" id="trou12" placeholder="mot">.
+
+    La création de processus sur UNIX se fait par <input type="text" id="trou13" placeholder="mot">. Cela signifie que pour créer un
+nouveau processus, il va falloir procéder en un ou deux temps :
+    <ul>
+        <li>
+            Dupliquer un processus existant en mémoire pour en créer un double (clône) parfait. C’est le
+rôle de la fonction <input type="text" id="trou14" placeholder="mot">
+        </li>
+        <li>
+            Si le code que doit exécuter le nouveau processus est identique à celui du processus dupliqué,
+il n’y a rien de plus à faire. Dans la négative, il convient de remplacer le code du processus
+<input type="text" id="trou15" placeholder="mot"> par un autre : c’est le rôle de la famille de fonctions <input type="text" id="trou16" placeholder="mot">
+        </li>
+    </ul>
+    Le processus qui a demandé à se clôner en appelant fork() est appelé processus père, ou parent.
+A l’inverse, le nouveau processus créé est appelé processus fils, ou en enfant.
+
+De ce mécanisme de clônage, il résulte que tout processus possède un parent et un seul. La seule
+exception est le PID <input type="text" id="trou17" placeholder="mot">, qui contrairement à une idée largement répandue, n’est pas le noyau, mais
+le gestionnaire de mémoire virtuelle (swapper). Lorsqu’un processus devient orphelin, parce que son
+père a terminé son exécution, il est automatiquement adopté par le PID <input type="text" id="trou18" placeholder="mot">, qui est le géniteur de
+toute l’arbre généalogique. Sur UNIX, il s’agit de init, de PID 1. Sur Linux, ce fut le cas pendant
+longtemps, jusqu’à l’introduction du démon système utilisateur systemd : il y a un service qui gère
+les processus par utilisateur (donc étanchéité absolue entre utilisateurs). Le PID de ce dernier n’est
+pas <input type="text" id="trou19" placeholder="mot">.
+
+</p>
+
+<p>
+    La fonction fork() créé un nouveau processus en recopiant intégralement en mémoire
+le segment <input type="text" id="trou20" placeholder="mot"> du processus appelant vers un nouvel espace libre, et en mettant en
+commun son segment <input type="text" id="trou21" placeholder="mot"> (ce dernier étant en lecture seule, et le code exécuté par les processus
+père et fils étant le même, sa recopie n’est pas nécessaire).
+
+Il en résulte un nouveau processus (dit processus fils, ou enfant), qui est un clône parfait du
+processus appelant (dit processus père, ou parent), à trois différences près
+:
+<ul>
+    <li>
+        Au processus père, fork() renvoit le PID du processus <input type="text" id="trou22" placeholder="mot"> qui vient d’être créé
+    </li>
+    <li>
+        Au processus fils, fork() renvoie <input type="text" id="trou23" placeholder="mot">
+    </li>
+    <li>
+        Le PID du fils diffère du PID du père
+    </li>
+</ul>
+Il convient d’insister dès le départ qu’au retour de fork() :
+<ul>
+    <li>
+    Il n’y a pas un, mais deux processus qui reprennent, avec un contenu memoire pareil ou différent ? <input type="text" id="trou24" placeholder="mot">,
+qui vont évoluer de manière séparée.
+    </li>
+    <li>
+        La comparaison de la valeur de retour de fork() à zéro est le seul moyen pour chaque processus
+de savoir s’il est le processus créateur (père) ou au contraire le processus créé (fils).
+    </li>
+    <li>
+        Après retour de fork(), les deux processus reprennent chacun leur exécution de manière
+totalement indépendante ? Vrai ou Faux ? <input type="text" id="trou25" placeholder="mot">
+    </li>
+    <li>
+        Il est impossible de prédire lequel des deux va reprendre son exécution en premier, le système
+n’apportant aucune garantie en la matière. En particulier, il n’est pas à exclure :
+        <ul>
+            <li>
+                pour le processus parent, que le fils soit à l’état « élu » au retour de fork
+
+            </li>
+            <li>
+                que les deux reprennent exactement en même temps
+            </li>
+        </ul>
+    </li>
+</ul>
+En cas d’erreur, fork() renvoie une valeur <input type="text" id="trou26" placeholder="mot">, et la variable errno fournit un code d’erreur
+exploitable, qui correspond le plus souvent soit à une limite de processus par utilisateur atteinte (voir
+la commande ulimit pour la limitation des ressources utilsateurs), soit à une mémoire disponible
+insuffisante.
+</p>
+
+<p>
+    Le nom de fork provient du fait qu’après appel de cette fonction, on créé une « fourchette » dans
+le chronogramme de filiation des processus. Ainsi, les deux représentations de la Fig. 1.2 sont presque
+équivalentes, car elles décrivent la même chose : un processus père (29) créé deux processus fils (30,
+31). La seule différence est que la représentation <input type="text" id="trou27" placeholder="mot"> est plus précise : elle permet de savoir ici
+que le processus 29 a repris son exécution (pendant un certain temps), après avoir créé le processus
+30, et avant d’engrendrer le processus 31. Donc 30 a été créé avant 31. C’est d’elle que provient la
+notion de « fourchette ». Dans la représentation <input type="text" id="trou28" placeholder="mot">, on peut seulement dire que 30 et 31
+sont des enfants de 30, sans plus (car l’ordre de création est perdu). L’avantage de la représentation
+temporelle est sa précision, son inconvénient est sa rapide illisibilité (envisager ce qui se passe au bout
+de 2, voire 3 générations) ; ceux de la représentation généalogique sont juste <input type="text" id="trou29" placeholder="mot">.
+</p>
+
+<p>
+    La sortie confirme bien que les deux processus ont écrit, puis relu tab avec des valeurs différentes,
+puisque la somme obtenue n’est pas la même. Mais comment expliquer que la valeur du pointeur
+de base du tableau soit exactement la même dans les deux cas, si les espaces mémoire qui ont été
+adressés ne sont pas les mêmes ? De deux choses l’une :
+<ul>
+    <li>
+        Soit le pointeur sur tab est le même et désigne la même adresse mémoire <input type="text" id="trou30" placeholder="mot">, ce qui
+serait possible dans cet exemple, et suggérerait que le code entre lignes 10 à 14 incluses a
+été exécuté non pas parrallèlement, mais <input type="text" id="trou31" placeholder="mot">. Mais cela contredirait ce qui a été
+annoncé plus haut, à savoir qu’un processus ne peut pas avoir accès aux données d’un autre.
+    </li>
+    <li>
+        Soit la valeur de ce pointeur est la même pour les deux processus, mais elle fait référence à
+des emplacements de mémoire physique <input type="text" id="trou32" placeholder="mot">.
+    </li>
+</ul>
+C’est la <input type="text" id="trou33" placeholder="mot"> explication qui est la bonne. Et c’est là qu’interviennent deux éléments complémentaires et indipensables à UNIX : la traduction d’adresse, et la mémoire virtuelle. En réalité, une
+adresse mémoire n’est jamais absolue pour le processeur : elle est toujours traduite en une adresse
+physique, par un composant électronique appelé MMU (memory management unit), dont le rôle
+consiste à réécrire les bits les plus significatifs du pointeur à l’aide d’une ou plusieurs tables, dont le
+contenu dépend précisément du processus en cours d’exécution.
+</p>
+
+<p>
+    En réalité, UNIX va plus loin en utilisant non pas une, mais deux tables : une table des <input type="text" id="trou34" placeholder="mot">
+par processus, et une table des zones <input type="text" id="trou35" placeholder="mot"> par région, Cette solution présente trois avantages :
+<ul>
+    <li>
+        elle réagrège, sous une forme contiguë en apparence, des segments de mémoire vive totalement
+disparates
+
+    </li>
+    <li>
+        par rapport à la solution à table unique, elle permet un découpage plus fin de la mémoire
+centrale en blocs, et évite de gaspiller de l’espace pour stocker des entrées dont une faible
+partie seulement a de chances d’être utilisée
+    </li>
+    <li>
+        elle permet la recopie des données telles qu’elles par fork(), mais aussi le partage du code
+exécutable, comme le montre la figure 1.4, dans laquelle le processus 3 (en rouge) est un enfant
+du processus 2, et est montré juste après l’appel à fork().
+    </li>
+</ul>
+
+Ceci se fait toutefois au coût d’un léger <input type="text" id="trou36" placeholder="mot"> des accès mémoire, puisque la MMU devra
+réaliser autant de lectures intermédiaires de ses tables qu’il existe de niveaux d’indirection à traverser
+pour résoudre l’adresse physique.
+Sur les architectures modernes, comme x86-64 (Intel), il est possible d’utiliser <input type="text" id="trou37" placeholder="mot">, et même <input type="text" id="trou38" placeholder="mot"> tables
+d’indirection.
+Ce procédé constitue la traduction d’adresses. La virtualisation de la mémoire centrale, ou mémoire
+virtuelle, consiste à envoyer des blocs de mémoire peu utilisés sur disque (on dit que le bloc est
+swappé), ou inversement, recharger un bloc swappé en mémoire centrale après en avoir envoyé un
+autre sur disque si nécessaire. Sur UNIX, le processus chargé de réaliser cela est le swapper, de PID
+0. La virtualisation est un procédé <input type="text" id="trou39" placeholder="mot">, car les transferts vers et depuis le disque sont toujours
+beaucoup plus lents qu’un accès en une mémoire vive. Mais couplé à la traduction d’adresses, il
+présente deux avantages considérables : 
+<ul>
+    <li>
+i) présenter à l’utilisateur une quantité de mémoire bien plus
+importante que celle disponible en mémoire <input type="text" id="trou40" placeholder="mot">, 
+</li>
+<li>
+ii) moyennant un "bon" algorithme de régulation
+des échanges, libérer de l’espace mémoire peu utilisé en faveur des processus qui en ont le plus besoin.
+</li>
+</ul>
+</p>
+
+<p>
+$ cc getppid.c <br>
+$ ./a.out<br>
+pere : mon PID = 6300, PID de mon pere = 1615<br>
+fils : mon PID = 6301, PID de mon pere = 6300<br>
+$<br>
+
+Il est intéressant de remarquer ici que la valeur du PID du processus créé (<input type="text" id="trou41" placeholder="mot">) suit celle du
+processus parent (<input type="text" id="trou42" placeholder="mot">), mais que le PID du père de ce dernier (<input type="text" id="trou43" placeholder="mot">) est beaucoup plus faible. Rien
+d’anormal à cela, en fait, ce PID est tout simplement celui du shell à partir duquel on a invoqué
+<br>
+./a.out :<br>
+$ ps -aux | grep 1615<br>
+xavier 1615 0.0 0.1 21944 5740 pts/0 Ss 12:51 0:00 bash<br>
+xavier 6320 0.0 0.0 12784 968 pts/0 S+ 22:34 0:00 grep 1615<br>
+</p>
+
+<p>
+void exit(int <input type="text" id="trou44" placeholder="mot">);
+<br>
+Elle termine le processus appelant avec le code spécifié en paramètre, dont seuls les <input type="text" id="trou45" placeholder="mot"> bits les moins
+significatifs seront pris en compte (autrement dit, les codes de sortie sont toujours dans la plage 0–
+255). C’est ce code que l’on récupère via la variable dollar ($) du shell, une valeur > 0 indiquant par
+convention une erreur.<br>
+Lorsque le processus appelant <input type="text" id="trou46" placeholder="mot">, toutes les zones mémoires qui lui avaient été allouées sont
+libérées (cf. figure 1.4), mais il survivra dans la table des processus où ce code est stocké, et ce jusqu’à
+ce que sont parent soit venu récupérer ce code via un appel à <input type="text" id="trou47" placeholder="mot"> ou waitpid(). Un processus
+qui a fait son exit(), mais dont le parent n’a pas encore fait d’appel à wait() ou waitpid(), est dit
+<input type="text" id="trou48" placeholder="mot">.<br>
+A noter egalement qu’un return 0 dans une fonction main() rend la main à une fonction système
+particulière (crt0), qui elle, fait l’appel à exit() immédiatement derrière.<br>
+</p>
+
+<p><br>
+    pid_t wait(int *wstatus);<br>
+pid_t waitpid(pid_t pid, int *wstatus, int options);<br>
+La fonction wait() :<br>
+
+<ul>
+    <li>
+i) soit récupère le code de sortie de l’un des enfants <input type="text" id="trou49" placeholder="mot"> du processus appelant, sous réserve
+qu’il en existe au moins un, place ce code dans les bits 8 à 15 de l’entier pointé par wstatus,
+puis renvoie le PID du zombie définitivement mort à l’appelant. Si wstatus vaut <input type="text" id="trou50" placeholder="mot">, le
+code n’est pas recopié.
+</li>
+<li>
+ii) soit fait basculer le processus appelant à l’état bloqué, si l’appelant possède bien au moins
+un enfant, mais aucun zombie ; il restera dans cet état jusqu’au décès effectif de l’un de ses
+enfants, et le traitement se poursuivra en i)
+</li>
+<li>
+iii) soit renvoie 0 si le processus appelant ne possède plus aucun enfant, zombie ou non.
+Cette fonction offre un moyen fondamental et simple de <input type="text" id="trou51" placeholder="mot"> un processus avec la terminaison de l’un de ses fils, voire de tous si elle est appelée en boucle à la manière d’un
+while (wait(NULL) > 0) ;
+</li>
+</ul>
+Un exemple simple est celui où deux <input type="text" id="trou52" placeholder="mot"> doivent trier parallèlement un tableau d’entiers, et écrire
+leur résultat sur fichiers, avant que le père relise les fichiers produits pour les fusionner.<br>
+La fonction <input type="text" id="trou53" placeholder="mot"> fait la même chose, mais attend le fils de pid spécifié, qui doit exister à
+défaut de provoquer une erreur et une valeur de retour < 0. Le troisième paramètre, options, peut
+être une combinaison de <input type="text" id="trou54" placeholder="mot"> et <input type="text" id="trou55" placeholder="mot">, qui modifient totalement le comportement
+attendu, en permettant de tester (sans bloquer) s’il n’y pas d’enfant décédé, et de faire la même chose
+parmi les processus non tracés par un appel à <input type="text" id="trou56" placeholder="mot">. On se contentera de la valeur de 0 dans le
+cadre de ce cours.<br>
+Signalons ici que le stockage dans les bits 8–15 n’a en fait rien de fantaisiste : historiquement, les
+mots machine sont restés pendant très longtemps de 16 bits au mieux, et les bits 0–7 étaient utilisés
+pour représenter les 15 <input type="text" id="trou57" placeholder="mot"> les plus importants, et responsables de la mort du processus.<br>
+
+</p>
+
+<p>
+Les familles de fonctions execl et execv poursuivent le même but : <input type="text" id="trou58" placeholder="mot"> l’exécution du
+processus appelant pour en exécuter un autre, dont le fichier binaire est spécifié en premier argument
+(path). On parle souvent de recourement, ou encore commutation d’image. Concrètement, le fichier
+spéficié par <input type="text" id="trou59" placeholder="mot">, sous réserve qu’il existe, est chargé en mémoire centrale, puis le système commute :
+les données et le code exécutable de l’appelant seront définitivement perdus, et le processus substitué
+démarrera son exécution depuis son main(int argc, char *argv[], char *envp[]).
+
+Reste à voir comment les arguments argv et envp seront transmis à ce main(). En ce qui concerne
+argv, cela est résolu par la <input type="text" id="trou60" placeholder="mot"> ème lettre du nom de la fonction (l ou v) :
+<ul>
+    <li>
+        Si la  <input type="text" id="trou61" placeholder="mot"> ème lettre est un ’l’, les arguments qui suivent path seront rassemblés par execl pour
+former le tableau unique argv[] qui sera reçu par main(). Le dernier de ces arguments doit
+toujours valoir <input type="text" id="trou62" placeholder="mot">.
+    </li>
+    <li>
+        Au contraire, si la <input type="text" id="trou63" placeholder="mot"> ème lettre est un ’v’, cela signifie que l’argument qui suit path représente
+déjà ce tableau de pointeurs terminé par NULL. Vous aurez donc nécessairement à charge de
+le créer. Il sera transmis tel quel ? Vrai ou Faux ? <input type="text" id="trou64" placeholder="mot">.
+    </li>
+</ul>
+On profitera de l’occasion pour rappeler que, par convention, le premier élément de argv est
+toujours le nom du programme lui-même. Il n’y a donc rien d’étonnant à ce que les 2 premeirs
+arguments d’un execl soient identiques.
+
+Les lettres suivantes, optionnelles et qui peuvent être ’p’ ou ’<input type="text" id="trou65" placeholder="mot">’, déterminent deux choses :
+<ul>
+    <li>
+    — S’il y a un ’p’, cela signifie que les chemins stockés dans la variable d’environnement PATH,
+doivent être examinés un par un, et dans l’ordre, afin de déterminer si fichier binaire exécutable
+correspondant à path se trouve dans le répertoire en cours d’examen. Si tel est le cas, exec
+utilisera ce fichier. En principe, l’utilisation d’un execp n’a donc de sens que si que path n’est
+pas un chemin absolu, mais relatif.
+</li>
+<li>
+    S’il y a un ’e’, cela signifie que le dernier argument est un tableau de <input type="text" id="trou66" placeholder="mot"> terminé par
+NULL vers les variables d’envionnement à recevoir. Ce tableau sera lui aussi transmis tel quel,
+et vous avez à charge de le construire vous-même.
+</li>
+<li>
+    S’il n’y a pas de ’e’, le main reçoit les variables d’<input type="text" id="trou67" placeholder="mot"> du processus appelant.
+A noter que la valeur de retour d’un exec est toujours négative, et dénote nécessairement une
+erreur pour le processus appelant, puisque cela implique qu’il a survécu, donc qu’exec a échoué.
+</li>
+</ul>
+</p>
+
+<button id="corrigerButton">Corriger</button>
+<p id="resultat"></p>
+
+
+<script>
+    window.onload = function() {
+        // Liaison du bouton à la fonction `corriger`
+        document.getElementById("corrigerButton").onclick = corriger;
+
+        function corriger() {
+            console.log("La fonction corriger a été appelée");
+
+            const reponsesCorrectes = [
+                "exécution", "mémoire", "code", "TEXT", "données", 
+                "tas", "pile", "pile", "PCB", "indépendance",
+                "Process ID", "16 bits", "clonage", "fork", "dupliqué",
+                "exec", "0", "racine", "fixe", "DATA", "TEXT", 
+                "fils", "0", "pareil", "Vrai", "négative", "temporelle",
+                "généalogique", "inverses", "physique", "séquentiellement", 
+                "différents", "deuxième", "régions", "mémoire", 
+                "ralentissement", "3", "4", "coûteux", "vive", 
+                "6301", "6300", "1615", "status", "8", "meurt", 
+                "wait", "zombie", "zombie", "NULL", "synchroniser", 
+                "fils", "waitpid", "WNOHANG", "WUNTRACED", "ptrace", 
+                "signaux", "abandonner", "path", "5", "5", 
+                "NULL", "5", "Vrai", "e", "pointeurs", "envrionnement"
+            ];
+
+            let score = 0;
+            let feedback = "<ul>";
+
+            // Boucle pour vérifier chaque réponse
+            for (let i = 1; i <= reponsesCorrectes.length; i++) {
+                let element = document.getElementById(`trou${i}`);
+                if (element) {
+                    if (element.value.toLowerCase() === reponsesCorrectes[i - 1]) {
+                        score++;
+                        feedback += `<li>Réponse ${i} : Correcte (${element.value})</li>`;
+                    } else {
+                        feedback += `<li>Réponse ${i} : Incorrecte (Votre réponse : ${element.value}, Réponse correcte : ${reponsesCorrectes[i - 1]})</li>`;
+                    }
+                } else {
+                    feedback += `<li>Réponse ${i} : Élément introuvable</li>`;
+                }
+            }
+
+            feedback += `</ul><p>Score total : ${score}/${reponsesCorrectes.length}</p>`;
+            document.getElementById("resultat").innerHTML = feedback;
+        }
+    };
+</script>
+
+
+</body>
+</html>
