@@ -70,6 +70,15 @@
     
     </section>
         
+    <script>
+        // Vérifie si l'utilisateur est authentifié
+        const isAuthenticated = sessionStorage.getItem("authenticated");
+    
+        if (!isAuthenticated) {
+            // Redirige vers login.html si non authentifié
+            window.location.href = "login.html";
+        }
+    </script>
     
 </body>
 <footer>
@@ -80,7 +89,10 @@
     
 </div>
 </footer>
+
+
 </html>
+
 
 
 

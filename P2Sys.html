@@ -549,6 +549,15 @@ fin si
         }
     };
 </script>
+<script src="/Mon-Site/auth.js"></script>
+<script>
+    // Vérifie si l'utilisateur est authentifié
+    const isAuthenticated = sessionStorage.getItem("authenticated");
 
+    if (!isAuthenticated) {
+        // Redirige vers login.html si non authentifié
+        window.location.href = "login.html";
+    }
+</script>
 </body>
 </html>
