@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Records du Club d'Athlétisme</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f6f9fb; font-family: 'Segoe UI', Arial, sans-serif; }
+    .dashboard-header {
+      background: linear-gradient(90deg, #0052cc 0%, #e63946 100%);
+      color: white;
+      padding: 2.5rem 1rem 1.2rem 1rem;
+      border-radius: 0 0 30px 30px;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    .nav-tabs { border: none; justify-content: center; gap: 8px; }
+    .nav-tabs .nav-link { color: #0052cc; font-weight: bold; border: none; border-radius: 10px; }
+    .nav-tabs .nav-link.active { background-color: #0052cc !important; color: #fff !important; }
+    .tab-content { background: white; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 2rem; margin-bottom: 2rem; }
+    .table-responsive { border-radius: 10px; overflow: auto; background: white; }
+    table { font-size: 0.98rem; }
+    th, td { text-align: center; vertical-align: middle; }
+    td:first-child, th:first-child { background: #f0f4f8 !important; font-weight: bold; }
+    tr:hover td { background: #f4f9fd; }
+    @media (max-width: 768px) {
+      .tab-content { padding: 0.5rem; }
+      th, td { font-size: 0.85rem; }
+    }
+    .cat-table { margin-bottom: 2rem; }
+    .cat-table th { background: #f6e7e7 !important; color: #e63946; }
+
+    table, th, td {
+  border: 1px solid #bcd;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 0.5em 0.7em;
+}
+tr:nth-child(even) {
+  background: #f6f9fb;
+}
+thead tr, tr.categorie {
+  background: #0052cc;
+  color: #fff;
+}
+td:first-child, th:first-child {
+  background: #e6f0fa;
+  font-weight: bold;
+}
+
+  </style>
+</head>
+<body>
+    <section class="container my-5">
+        <h2 class="mb-4">Statistiques du Club</h2>
+        <div class="row g-4">
+          <div class="col-md-3 col-6">
+            <div class="bg-white rounded shadow p-3 text-center">
+              <div class="h1 mb-1 text-primary">108</div>
+              <div>Athlètes masculins au total</div>
+            </div>
+          </div>
+          <div class="col-md-3 col-6">
+            <div class="bg-white rounded shadow p-3 text-center">
+              <div class="h1 mb-1 text-danger">76</div>
+              <div>Athlètes féminines au total</div>
+            </div>
+          </div>
+          <div class="col-md-3 col-6">
+            <div class="bg-white rounded shadow p-3 text-center">
+              <div class="h1 mb-1 text-success">30</div>
+              <div>Performances en 2025</div>
+            </div>
+          </div>
+          <div class="col-md-3 col-6">
+            <div class="bg-white rounded shadow p-3 text-center">
+              <div class="h1 mb-1 text-warning">10</div>
+              <div>Records battus en 2025</div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="bg-light rounded shadow p-3 text-center">
+              <div class="h2 mb-1 text-secondary">
+                Nombre total de records&nbsp;: <b id="total-records"></b>
+              </div>
+              <div>(somme de toutes les cases remplies dans les tableaux de records)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <script>
+      // Calcule automatiquement le nombre total de records à partir des tableaux HTML présents sur la page
+      document.addEventListener("DOMContentLoaded", function() {
+        let total = 0;
+        document.querySelectorAll("table").forEach(table => {
+          for (let row of table.rows) {
+            // Ignore l'en-tête
+            if(row.rowIndex === 0) continue;
+            // Compte chaque cellule non vide sauf la première colonne (discipline)
+            for(let i=1; i<row.cells.length; i++) {
+              if(row.cells[i].innerText.trim() !== "") total++;
+            }
+          }
+        });
+        document.getElementById("total-records").textContent = total;
+      });
+      </script>
+
+
+
+
+
+  <div class="dashboard-header">
+    <h1>Records du Club d'Athlétisme</h1>
+    <p>Tableaux actualisés par catégorie et discipline</p>
+  </div>
+
+  <div class="container">
+    <ul class="nav nav-tabs mb-3" id="recordTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="hommes-salle-tab" data-bs-toggle="tab" data-bs-target="#hommes-salle" type="button" role="tab">Hommes Salle</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="hommes-pleinair-tab" data-bs-toggle="tab" data-bs-target="#hommes-pleinair" type="button" role="tab">Hommes Plein Air</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="femmes-salle-tab" data-bs-toggle="tab" data-bs-target="#femmes-salle" type="button" role="tab">Femmes Salle</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="femmes-pleinair-tab" data-bs-toggle="tab" data-bs-target="#femmes-pleinair" type="button" role="tab">Femmes Plein Air</button>
+      </li>
+    </ul>
+    <div class="tab-content" id="recordTabsContent">
+      <!-- Hommes Salle -->
+      <div class="tab-pane fade show active" id="hommes-salle" role="tabpanel">
+        <div class="table-responsive">
+          <h5 class="mb-3">Records Hommes Salle</h5>
+          <!-- Tableau Records homme salle -->
+          
+          <!-- Début du tableau -->
+          <table>
+            <table>
+                <tr>
+                    <td>Discipline</td>
+                    <td>PO</td>
+                    <td>BE</td>
+                    <td>MI</td>
+                    <td>CA</td>
+                    <td>JU</td>
+                    <td>ES</td>
+                    <td>SE</td>
+                </tr>
+                <tr>
+                    <td>50m - Salle</td>
+                    <td>8&quot;0 (HIRSCH Ethan, 17/12/2017, Paris)</td>
+                    <td>8&quot;0 (DUCROIZET Florian, 07/01/2012, Paris)</td>
+                    <td>6&quot;8 (HAMAM Mohamed El-Eddy, 17/12/2017, Paris)</td>
+                    <td>6&quot;98 (FIGUEIRA Gautier, 16/03/2008, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60m - Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>7&quot;54 (HAMAM Mohamed El-Eddy, 01/12/2018, Eaubonne)</td>
+                    <td>7&quot;17 (NGOMA KOUTALOU Paul-Tresor, 16/11/2019, Eaubonne)</td>
+                    <td>7&quot;15 (NGOMA KOUTALOU Paul-Tresor, 02/02/2020, Paris)</td>
+                    <td>7&quot;8 (BOBET Gregory, 27/11/2004, Paris)</td>
+                    <td>7&quot;15 (GUILHAUMOU Kevin, 21/11/2015, Eaubonne)</td>
+                </tr>
+                <tr>
+                    <td>Hauteur - Salle</td>
+                    <td></td>
+                    <td>1m47 (NGOMA KOUTALOU Paul-Tresor, 28/11/2015, Mondeville)</td>
+                    <td>1m55 (BEAUDOIN Cedric, 26/11/2006, Paris)</td>
+                    <td>1m95 (BEAUDOIN Cedric, 13/12/2008, Paris)</td>
+                    <td>1m95 (BEAUDOIN Cedric, 31/01/2009, Eaubonne)</td>
+                    <td>1m89 (BEAUDOIN Cedric, 28/01/2012, Eaubonne)</td>
+                    <td>1m83 (BEAUDOIN Cedric, 04/01/2014, Paris)</td>
+                </tr>
+                <tr>
+                    <td>Longueur - Salle</td>
+                    <td>3m97 (HIRSCH Ethan, 17/12/2017, Paris)</td>
+                    <td>5m31 (NGOMA KOUTALOU Paul-Tresor, 21/11/2015, Mondeville)</td>
+                    <td>5m64 (NGOMA KOUTALOU Paul-Tresor, 20/03/2016, Rennes)</td>
+                    <td>6m72 (NGOMA KOUTALOU Paul-Tresor, 24/11/2019, Eaubonne)</td>
+                    <td>6m62 (NGOMA KOUTALOU Paul-Tresor, 01/02/2020, Eaubonne)</td>
+                    <td>6m41 (BEAUDOIN Cedric, 05/01/2013, Paris)</td>
+                    <td>6m21 (BOBET Gregory, 13/12/2008, Eaubonne)</td>
+                </tr>
+                <tr>
+                    <td>Pentabond - Salle</td>
+                    <td></td>
+                    <td>9m21 (NIENAT Lawrence, 21/02/2010, Fort-De-France)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Perche - Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>2m20 (FIGUEIRA Gautier, 08/12/2007, Paris)</td>
+                    <td>3m40 (BEAUDOIN Cedric, 14/12/2008, Paris)</td>
+                    <td>2m50 (FIGUEIRA Gautier, 09/01/2011, Paris)</td>
+                    <td>3m80 (BEAUDOIN Cedric, 06/01/2013, Paris)</td>
+                    <td>3m55 (BOBET Gregory, 16/12/2007, Eaubonne)</td>
+                </tr>
+                <tr>
+                    <td>Poids (3 kg) - Salle</td>
+                    <td></td>
+                    <td>7m69 (BRUNETEAU Victor, 11/02/2018, Paris)</td>
+                    <td>6m89 (NIENAT Lawrence, 21/01/2012, Paris)</td>
+                    <td>8m08 (TIERSEN Emma, 12/03/2017, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (4 kg) - Salle</td>
+                    <td></td>
+                    <td>10m13 (NGOMA KOUTALOU Paul-Tresor, 21/11/2015, Mondeville)</td>
+                    <td>9m81 (NGOMA KOUTALOU Paul-Tresor, 20/03/2016, Rennes)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (5 kg) - Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>8m51 (HAMAM Mohamed El-Eddy, 01/12/2018, Eaubonne)</td>
+                    <td>8m78 (FIGUEIRA Gautier, 07/12/2008, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (6 kg) - Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>7m23 (FIGUEIRA Gautier, 12/12/2009, Paris)</td>
+                    <td>8m85 (NGOMA KOUTALOU Paul-Tresor, 18/01/2020, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (7 kg) - Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>8m32 (NIENAT Obrian, 30/11/2014, Eaubonne)</td>
+                    <td>9m10 (BOBET Gregory, 27/11/2004, Paris)</td>
+                    <td>9m97 (BOBET Gregory, 16/01/2010, Eaubonne)</td>
+                </tr>
+                <tr>
+                    <td>Triathlon - Salle Table 2017</td>
+                    <td>63 pts (HIRSCH Ethan, 17/12/2017, Paris)</td>
+                    <td>87 pts (JASPIERRE Loic, 05/02/2012, Reims)</td>
+                    <td>95 pts (NGOMA KOUTALOU Paul-Tresor, 30/01/2016, Mondeville)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triathlon - Salle U14-U16</td>
+                    <td></td>
+                    <td>78 pts (HIRSCH Ethan, 15/12/2018, Paris)</td>
+                    <td>71 pts (GUILLON Melvin, 27/11/2021, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triple saut - Salle</td>
+                    <td></td>
+                    <td>9m65 (FRANCO Estéban, 05/03/2017, Nogent Sur Oise)</td>
+                    <td>9m98 (MARTINE Anthony, 23/02/2013, Paris)</td>
+                    <td>8m56 (TIERSEN Emma, 19/03/2016, Eaubonne)</td>
+                    <td>12m28 (FRANCO Estéban, 16/01/2022, Miramas)</td>
+                    <td>12m26 (NDIAYE Olivier, 14/02/2015, Nogent Sur Oise)</td>
+                    <td></td>
+                </tr>
+            </table>
+            
+          </table>
+        </div>
+      </div>
+      <!-- Hommes Plein Air -->
+      <div class="tab-pane fade" id="hommes-pleinair" role="tabpanel">
+        <div class="table-responsive">
+          <h5 class="mb-3">Records Hommes Plein Air</h5>
+          <!-- Tableau Records homme plein air -->
+          
+          <table>
+            <table>
+                <tr>
+                    <td>Discipline</td>
+                    <td>BE</td>
+                    <td>MI</td>
+                    <td>CA</td>
+                    <td>JU</td>
+                    <td>ES</td>
+                    <td>SE</td>
+                    <td>MA</td>
+                </tr>
+                <tr>
+                    <td>1 000m</td>
+                    <td>4&#39;07&quot;32 (SALESSES Etienne, 10/06/2015, Saint Maur Des Fosses)</td>
+                    <td>3&#39;57&quot;15 (TIERSEN Emma, 20/05/2015, Saint Maur Des Fosses)</td>
+                    <td>2&#39;57&quot;97 (EDDEAIF Redouane, 12/04/2015, Maisons Alfort)</td>
+                    <td>3&#39;04&quot;20 (RENELLE Tony, 12/04/2015, Maisons Alfort)</td>
+                    <td></td>
+                    <td>3&#39;04&quot;75 (EDDEAIF Redouane, 31/05/2024, Sucy En Brie)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1 000m Piste Courte</td>
+                    <td>3&#39;24&quot;3 (HIRSCH Ethan, 15/12/2018, Paris)</td>
+                    <td>2&#39;46&quot;14 (VILLIGER Antonin, 26/10/2014, Paris)</td>
+                    <td>2&#39;58&quot;95 (BEAUDOIN Cedric, 14/12/2008, Paris)</td>
+                    <td>2&#39;54&quot;79 (FIGUEIRA Gautier, 30/01/2011, Eaubonne)</td>
+                    <td>2&#39;47&quot;22 (BEAUDOIN Cedric, 27/01/2013, Eaubonne)</td>
+                    <td>2&#39;49&quot;47 (BEAUDOIN Cedric, 26/01/2014, Paris)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1 500m</td>
+                    <td></td>
+                    <td></td>
+                    <td>5&#39;32&quot;20 (MARCASTEL Corentin, 12/06/2013, Saint Maur Des Fosses)</td>
+                    <td>5&#39;03&quot;31 (BEAUDOIN Cedric, 10/05/2009, Noisy-Le-Grand)</td>
+                    <td>5&#39;10&quot;18 (EDDEAIF Redouane, 13/04/2019, Joinville Le Pont)</td>
+                    <td>5&#39;53&quot;39 (BOBET Gregory, 25/05/2008, Cormeilles-En-Parisis)</td>
+                    <td>5&#39;30&quot;73 (RAMOS Rui, 29/04/2018, Antony)</td>
+                </tr>
+                <tr>
+                    <td>1 500m Piste Courte</td>
+                    <td></td>
+                    <td></td>
+                    <td>4&#39;23&quot;08 (VILLIGER Antonin, 14/02/2015, Nogent Sur Oise)</td>
+                    <td>4&#39;58&quot;75 (RENELLE Tony, 04/12/2014, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1/2 Marathon</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>1h54&#39;59&quot; (GLASBERG Romain, 21/10/2018, Paris)</td>
+                    <td></td>
+                    <td>1h52&#39;52&quot; (CAPE Stephane, 04/09/2005, Gien)</td>
+                    <td>2h42&#39;17&quot; (COURREGES Stephane, 17/03/2024, Tulle)</td>
+                </tr>
+                <tr>
+                    <td>10 000m</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>46&#39;12&quot;0 (BRESSON Dominique, 21/04/2015, Ozoir La Ferriere)</td>
+                </tr>
+                <tr>
+                    <td>10 Km Route</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>35&#39;35&quot; (HIRSCH Ethan, 23/03/2025, Bletterans)</td>
+                    <td></td>
+                    <td>33&#39;06&quot; (COURREGES Stephane, 21/03/2004, Auch)</td>
+                    <td>2h06&#39;39&quot; (VASSEUR Jean-Claude, 29/05/2016, Paris)</td>
+                </tr>
+                <tr>
+                    <td>100m</td>
+                    <td>16&quot;58 (+0.5) (OGNARD Rayan, 08/05/2018, Cachan)</td>
+                    <td>15&quot;42 (+0.7) (DUCROIZET Florian, 20/04/2013, Alfortville)</td>
+                    <td>13&quot;97 (-0.3) (DUCROIZET Florian, 31/05/2015, Paris)</td>
+                    <td>13&quot;15 (F) (+2.5) (KAMARA Bryan-Lamin, 06/04/2014, Maisons Alfort)</td>
+                    <td>12&quot;47 (+1.6) (LANOE Johann, 12/04/2015, Maisons Alfort)</td>
+                    <td>14&quot;24 (+0.0) (EDDEAIF Redouane, 18/05/2024, Villejuif)</td>
+                    <td>13&quot;41 (+0.0) (BLONDIN Jeremy, 18/05/2024, Villejuif)</td>
+                </tr>
+                <tr>
+                    <td>100m Haies (84)</td>
+                    <td></td>
+                    <td>21&quot;3 (NC) (FIGUEIRA Gautier, 07/10/2006, Bonneuil-Sur-Marne)</td>
+                    <td>19&quot;09 (+ 2.0) (TIERSEN Emma, 01/05/2016, Antony)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>110m Haies (106)</td>
+                    <td></td>
+                    <td></td>
+                    <td>19&quot;93 (-1.9) (SALESSES Etienne, 13/04/2019, Joinville Le Pont)</td>
+                    <td>16&quot;52 (-0.2) (BEAUDOIN Cedric, 16/05/2009, Montreuil-Sous-Bois)</td>
+                    <td>16&quot;05 (F) (+ 2.1) (BEAUDOIN Cedric, 23/06/2013, Montgeron)</td>
+                    <td>15&quot;66 (+0.7) (BOBET Gregory, 02/05/2009, Bondy)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>110m Haies (91)</td>
+                    <td></td>
+                    <td></td>
+                    <td>16&quot;35 (BEAUDOIN Cedric, 01/06/2008, Tremblay-En-France)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>110m Haies (99)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>16&quot;2 (+0.0) (BEAUDOIN Cedric, 10/05/2009, Noisy-Le-Grand)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>120m</td>
+                    <td></td>
+                    <td>15&quot;59 (-1.9) (GUILLON Melvin, 26/05/2022, Cachan)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>15 Km Route</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>1h00&#39;23&quot; (HANAU Stephane, 11/02/2024, Charenton Le Pont)</td>
+                </tr>
+                <tr>
+                    <td>2 000m</td>
+                    <td></td>
+                    <td>6&#39;34&quot;77 (JACQUET DOMPS Raphael, 18/05/2022, Saint Maur Des Fosses)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>7&#39;11&quot;77 (RAMOS Rui, 15/05/2013, Saint Maur Des Fosses)</td>
+                </tr>
+                <tr>
+                    <td>2 000m Marche</td>
+                    <td>14&#39;15&quot;6 (NIENAT Obrian, 28/01/2007, Trinité)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>20 Km Route</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>1h18&#39;15&quot; (CAPE Stephane, 10/10/2021, Paris)</td>
+                </tr>
+                <tr>
+                    <td>200m</td>
+                    <td></td>
+                    <td>27&quot;04 (NC) (FIGUEIRA Gautier, 20/10/2007, Maisons-Alfort)</td>
+                    <td>29&quot;61 (+0.7) (NIENAT Lawrence, 10/05/2014, Ivry Sur Seine)</td>
+                    <td>30&quot;30 (-1.1) (TIERSEN Emma, 18/04/2019, Creteil)</td>
+                    <td>26&quot;94 (+0.1) (HAMAM Mohamed El-Eddy, 08/05/2023, Bonneuil Sur Marne)</td>
+                    <td>26&quot;60 (F) (+2.2) (FOSCHIANI Louis, 21/04/2024, Bonneuil Sur Marne)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>200m Haies (76)</td>
+                    <td></td>
+                    <td>30&quot;4 (-1.6) (HAMAM Mohamed El-Eddy, 07/04/2018, Le Plessis Trevise)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>200m Piste Courte</td>
+                    <td></td>
+                    <td>24&quot;3 (JASPIERRE Loic, 29/11/2014, Fontainebleau)</td>
+                    <td>22&quot;86 (NGOMA KOUTALOU Paul-Tresor, 24/11/2019, Eaubonne)</td>
+                    <td>22&quot;74 (NGOMA KOUTALOU Paul-Tresor, 09/02/2020, Eaubonne)</td>
+                    <td>23&quot;05 (AIME Florent, 28/11/2021, Eaubonne)</td>
+                    <td>23&quot;41 (AIME Florent, 26/11/2022, Eaubonne)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3 000m</td>
+                    <td></td>
+                    <td></td>
+                    <td>10&#39;41&quot;03 (JACQUET DOMPS Raphael, 22/05/2024, Saint Maur Des Fosses)</td>
+                    <td>11&#39;04&quot;64 (GLASBERG Romain, 29/04/2018, Antony)</td>
+                    <td>9&#39;48&quot;89 (BLONDIN Jeremy, 05/10/2008, Ivry-Sur-Seine)</td>
+                    <td>9&#39;58&quot;57 (COURREGES Stephane, 07/05/2006, Conflans-Ste-Honorine)</td>
+                    <td>9&#39;46&quot;78 (LOUNI Amar, 24/04/2022, Le Plessis Robinson)</td>
+                </tr>
+                <tr>
+                    <td>3000m Steeple (91)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>12&#39;02&quot;96 (MARCASTEL Corentin, 27/04/2014, Antony)</td>
+                    <td>11&#39;00&quot;83 (BLONDIN Jeremy, 04/05/2008, Créteil)</td>
+                    <td>10&#39;31&quot;89 (BLONDIN Jeremy, 30/04/2017, Antony)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>300m</td>
+                    <td></td>
+                    <td></td>
+                    <td>41&quot;63 (GUILHAUMOU Kevin, 28/05/2006, Joinville-Le-Pont)</td>
+                    <td></td>
+                    <td>37&quot;06 (FIGUEIRA Gautier, 02/07/2014, Paris)</td>
+                    <td>39&quot;02 (JASPIERRE Loic, 11/04/2025, Torcy)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>320m Haies (84)</td>
+                    <td></td>
+                    <td>54&quot;1 (FIGUEIRA Gautier, 13/10/2007, Thiais)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>400m</td>
+                    <td></td>
+                    <td></td>
+                    <td>65&quot;90 (HILLION Yann, 01/05/2016, Antony)</td>
+                    <td>69&quot;02 (TIERSEN Emma, 29/04/2018, Antony)</td>
+                    <td>58&quot;76 (NIENAT Lawrence, 14/06/2017, Alfortville)</td>
+                    <td>65&quot;37 (BIRR Stephane, 18/05/2024, Villejuif)</td>
+                    <td>55&quot;11 (PATERNOSTRE Jeremy, 21/04/2024, Bonneuil Sur Marne)</td>
+                </tr>
+                <tr>
+                    <td>400m Haies (76)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>63&quot;23 (NIENAT Lawrence, 27/04/2018, Torcy)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>400m Haies (91)</td>
+                    <td></td>
+                    <td></td>
+                    <td>71&quot;20 (DUCROIZET Florian, 01/05/2016, Antony)</td>
+                    <td>59&quot;85 (DUCROIZET Florian, 03/06/2017, Montgeron)</td>
+                    <td>57&quot;88 (DUCROIZET Florian, 03/07/2021, Ivry Sur Seine)</td>
+                    <td>57&quot;23 (DUCROIZET Florian, 26/06/2022, Nogent Sur Marne)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>400m Piste Courte</td>
+                    <td></td>
+                    <td>54&quot;51 (VILLIGER Antonin, 15/11/2014, Eaubonne)</td>
+                    <td>52&quot;33 (JASPIERRE Loic, 04/12/2016, Eaubonne)</td>
+                    <td>52&quot;01 (JASPIERRE Loic, 28/01/2017, Eaubonne)</td>
+                    <td>50&quot;29 (VILLIGER Antonin, 16/11/2019, Eaubonne)</td>
+                    <td>49&quot;76 (VILLIGER Antonin, 26/11/2023, Fontainebleau)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>5 000m</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>17&#39;59&quot;36 (EDDEAIF Redouane, 30/05/2018, Creteil)</td>
+                    <td></td>
+                    <td>19&#39;22&quot;0 (HANAU Stephane, 10/04/2012, Torcy)</td>
+                    <td>21&#39;50&quot;6 (BRESSON Dominique, 01/04/2014, Lagny Sur Marne)</td>
+                </tr>
+                <tr>
+                    <td>5 000m Marche</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>32&#39;39&quot;96 (BLONDIN Jeremy, 22/05/2011, Longjumeau)</td>
+                    <td>34&#39;12&quot;51 (COLTEE Francois, 01/05/2016, Antony)</td>
+                </tr>
+                <tr>
+                    <td>5 Km Route</td>
+                    <td></td>
+                    <td></td>
+                    <td>17&#39;27&quot; (HIRSCH Ethan, 17/09/2023, Joinville Le Pont)</td>
+                    <td>17&#39;35&quot; (HIRSCH Ethan, 21/09/2024, Lons Le Saunier)</td>
+                    <td></td>
+                    <td>16&#39;55&quot; (AIRES Baptiste, 29/09/2024, Mitry Mory)</td>
+                    <td>16&#39;07&quot; (LOUNI Amar, 27/10/2024, Saint Omer)</td>
+                </tr>
+                <tr>
+                    <td>50m</td>
+                    <td>9&quot;92 (NC) (TOUZART Benjamin, 30/03/2014, Le Plessis Trevise)</td>
+                    <td>9&quot;28 (+1.0) (KPADJOUDA Rubens, 30/03/2019, Joinville Le Pont)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (65)</td>
+                    <td>10&quot;4 (NC) (MAYER Lenny, 04/04/2015, Le Plessis Trevise)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (65)-Salle</td>
+                    <td>9&quot;8 (SALESSES Etienne, 24/01/2016, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (76)</td>
+                    <td>9&quot;91 (+1.6) (SALESSES Etienne, 14/05/2016, Chevilly Larue)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (76)-Salle</td>
+                    <td></td>
+                    <td>9&quot;65 (TEIXEIRA Marine, 02/02/2020, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (84)-Salle</td>
+                    <td>8&quot;25 (NGOMA KOUTALOU Paul-Tresor, 28/11/2015, Mondeville)</td>
+                    <td>8&quot;4 (SALESSES Etienne, 17/12/2017, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (91)-Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>8&quot;45 (BEAUDOIN Cedric, 15/03/2008, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (99)-Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>7&quot;79 (SALESSES Etienne, 04/12/2021, Viry Chatillon)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies(106)-Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>7&quot;95 (BOBET Gregory, 11/12/2004, Paris)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60m</td>
+                    <td></td>
+                    <td></td>
+                    <td>7&quot;20 (GUILLON Melvin, 21/12/2024, Eaubonne)</td>
+                    <td></td>
+                    <td>7&quot;67 (HAMAM Mohamed El-Eddy, 21/12/2024, Eaubonne)</td>
+                    <td>8&quot;11 (NIENAT Lawrence, 11/01/2025, Fontainebleau)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60m Haies (76)-Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>11&quot;03 (TIERSEN Emma, 19/03/2016, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60m Haies (91)-Salle</td>
+                    <td></td>
+                    <td>9&quot;22 (SALESSES Etienne, 25/11/2018, Eaubonne)</td>
+                    <td>8&quot;45 (NGOMA KOUTALOU Paul-Tresor, 12/01/2019, Fontainebleau)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60m Haies (99)-Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>8&quot;67 (NGOMA KOUTALOU Paul-Tresor, 24/11/2019, Eaubonne)</td>
+                    <td>8&quot;34 (NGOMA KOUTALOU Paul-Tresor, 08/02/2020, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60m Haies(106)-Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>9&quot;7 (BOBET Gregory, 28/11/2004, Paris)</td>
+                    <td>9&quot;00 (BEAUDOIN Cedric, 26/01/2014, Paris)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>800m</td>
+                    <td></td>
+                    <td></td>
+                    <td>2&#39;26&quot;80 (RENELLE Tony, 01/04/2013, L&#39;hay Les Roses)</td>
+                    <td>2&#39;14&quot;38 (GLASBERG Romain, 30/04/2017, Antony)</td>
+                    <td>2&#39;19&quot;27 (LANOE Johann, 26/06/2013, Saint Maur Des Fosses)</td>
+                    <td>2&#39;20&quot;12 (CHARTRE Guillaume, 08/05/2023, Bonneuil Sur Marne)</td>
+                    <td>2&#39;51&quot;16 (RAMOS Rui, 13/04/2019, Joinville Le Pont)</td>
+                </tr>
+                <tr>
+                    <td>800m Piste Courte</td>
+                    <td></td>
+                    <td>2&#39;05&quot;85 (VILLIGER Antonin, 30/11/2014, Eaubonne)</td>
+                    <td>2&#39;04&quot;0 (BLONDIN Jeremy, 19/11/2005, Paris)</td>
+                    <td>2&#39;07&quot;02 (BLONDIN Jeremy, 21/01/2006, Eaubonne)</td>
+                    <td>2&#39;14&quot;99 (RENELLE Tony, 10/11/2016, Eaubonne)</td>
+                    <td>2&#39;04&quot;18 (PATERNOSTRE Jeremy, 30/11/2014, Eaubonne)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>80m</td>
+                    <td></td>
+                    <td>12&quot;17 (+1.5) (HAMMANI Sofian, 29/03/2025, Ivry Sur Seine)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>80m Haies (76)</td>
+                    <td></td>
+                    <td>15&quot;88 (+0.0) (TIERSEN Emma, 07/06/2015, Ivry Sur Seine)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Decathlon CH</td>
+                    <td></td>
+                    <td></td>
+                    <td>5 695 pts (BEAUDOIN Cedric, 14/06/2008, Cormeilles-En-Parisis)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Decathlon JH</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>5 682 pts (BEAUDOIN Cedric, 09/05/2009, Noisy-Le-Grand)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Decathlon SH</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>6 224 pts (BEAUDOIN Cedric, 09/06/2012, Bondy)</td>
+                    <td>4 457 pts (BOBET Gregory, 24/05/2008, Cormeilles-En-Parisis)</td>
+                    <td>3 163 pts (PATERNOSTRE Jeremy, 19/05/2024, Villejuif)</td>
+                </tr>
+                <tr>
+                    <td>Disque (1.0 kg)</td>
+                    <td>9m03 (TCHOUMTA Jeff-Alex, 03/06/2023, Bonneuil Sur Marne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Disque (1.2 kg)</td>
+                    <td>11m09 (GONTHIER Dylan, 16/12/2017, L&#39;etang Sale)</td>
+                    <td>29m10 (NGOMA KOUTALOU Paul-Tresor, 04/06/2016, Tourlaville)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Disque (1.5 kg)</td>
+                    <td></td>
+                    <td>20m02 (BEAUDOIN Cedric, 01/10/2006, Aulnay-Sous-Bois)</td>
+                    <td>39m07 (BEAUDOIN Cedric, 17/02/2008, Compiègne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Disque (1.75 kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td>31m18 (BEAUDOIN Cedric, 05/10/2008, Antony)</td>
+                    <td>29m94 (BEAUDOIN Cedric, 10/05/2009, Noisy-Le-Grand)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Disque (2.0 kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td>16m81 (SALESSES Etienne, 13/04/2019, Joinville Le Pont)</td>
+                    <td>26m37 (BRUNETEAU Victor, 21/04/2024, Bonneuil Sur Marne)</td>
+                    <td>33m71 (BEAUDOIN Cedric, 10/06/2012, Bondy)</td>
+                    <td>47m58 (NIENAT Obrian, 18/06/2023, Pontoise)</td>
+                    <td>27m26 (PATERNOSTRE Jeremy, 19/05/2024, Villejuif)</td>
+                </tr>
+                <tr>
+                    <td>Hauteur</td>
+                    <td>1m51 (COUBARD Adrien, 03/06/2023, Bonneuil Sur Marne)</td>
+                    <td>1m61 (COUBARD Adrien, 29/03/2025, Ivry Sur Seine)</td>
+                    <td>1m88 (BEAUDOIN Cedric, 05/10/2008, Antony)</td>
+                    <td>1m92 (BEAUDOIN Cedric, 14/06/2009, Nogent-Sur-Marne)</td>
+                    <td>1m90 (BEAUDOIN Cedric, 21/05/2011, Conflans Sainte Honor)</td>
+                    <td>1m90 (BEAUDOIN Cedric, 18/05/2014, Aix Les Bains)</td>
+                    <td>1m40 (LOUNI Amar, 24/04/2022, Le Plessis Robinson)</td>
+                </tr>
+                <tr>
+                    <td>Heptathlon CH-Salle</td>
+                    <td></td>
+                    <td>2 658 pts (FIGUEIRA Gautier, 08/12/2007, Paris)</td>
+                    <td>3 509 pts (HAMAM Mohamed El-Eddy, 18/01/2020, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Heptathlon JH-Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>4 316 pts (BEAUDOIN Cedric, 13/12/2008, Paris)</td>
+                    <td>4 054 pts (NGOMA KOUTALOU Paul-Tresor, 18/01/2020, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Heptathlon SH-Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>4 635 pts (BEAUDOIN Cedric, 05/01/2013, Paris)</td>
+                    <td>4 520 pts (BEAUDOIN Cedric, 25/01/2014, Paris)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Heure Piste</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>12 227 m (BRESSON Dominique, 07/04/2018, Dammartin En Goele)</td>
+                </tr>
+                <tr>
+                    <td>Javelot (400 g)</td>
+                    <td>20m04 (NIENAT Lawrence, 04/07/2010, St-Florentin)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Javelot (500 g)</td>
+                    <td>9m48 (TOUZART Antoine, 30/03/2014, Le Plessis Trevise)</td>
+                    <td>17m10 (NIENAT Lawrence, 30/04/2011, Fontainebleau)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Javelot (600 g)</td>
+                    <td></td>
+                    <td>30m30 (BEAUDOIN Cedric, 14/05/2006, Ivry-Sur-Seine)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Javelot (700 g)</td>
+                    <td></td>
+                    <td>37m00 (BEAUDOIN Cedric, 17/12/2006, Joinville-Le-Pont)</td>
+                    <td>49m68 (BEAUDOIN Cedric, 17/02/2008, Compiègne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>43m58 (RUFO Sylvain, 11/04/2015, Longjumeau)</td>
+                </tr>
+                <tr>
+                    <td>Javelot (800 g)</td>
+                    <td></td>
+                    <td></td>
+                    <td>43m50 (BEAUDOIN Cedric, 17/05/2008, Maisons-Laffitte)</td>
+                    <td>41m32 (BEAUDOIN Cedric, 15/05/2010, Ivry-Sur-Seine)</td>
+                    <td>48m09 (BEAUDOIN Cedric, 25/09/2011, Noisy Le Grand)</td>
+                    <td>48m70 (BEAUDOIN Cedric, 20/06/2015, Ivry Sur Seine)</td>
+                    <td>42m89 (RUFO Sylvain, 25/04/2006, Lagny-Sur-Marne)</td>
+                </tr>
+                <tr>
+                    <td>Kids Athlétics</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Longueur</td>
+                    <td>5m37 (+0.4) (NGOMA KOUTALOU Paul-Tresor, 04/10/2015, Saint-Lo)</td>
+                    <td>5m96 (NC) (NGOMA KOUTALOU Paul-Tresor, 30/04/2016, Caen)</td>
+                    <td>6m45 (+0.8) (NGOMA KOUTALOU Paul-Tresor, 26/05/2019, Creteil)</td>
+                    <td>6m36 (F) (+2.4) (NGOMA KOUTALOU Paul-Tresor, 30/07/2020, Joinville Le Pont)</td>
+                    <td>6m50 (+1.0) (BEAUDOIN Cedric, 09/06/2012, Bondy)</td>
+                    <td>6m11 (F) (+2.5) (BEAUDOIN Cedric, 06/04/2014, Maisons Alfort)</td>
+                    <td>5m43 (NC) (RUFO Sylvain, 10/09/2005, Joinville-Le-Pont)</td>
+                </tr>
+                <tr>
+                    <td>Marathon</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>3h56&#39;45&quot; (CAPE Stephane, 27/11/2005, La Rochelle)</td>
+                    <td>5h06&#39;41&quot; (LOIRE Sébastien, 02/06/2018, Royan)</td>
+                </tr>
+                <tr>
+                    <td>Marteau (3 kg)</td>
+                    <td>15m68 (BRUNETEAU Victor, 08/04/2018, Alfortville)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Marteau (4 kg)</td>
+                    <td></td>
+                    <td>16m29 (TOUZART Antoine, 10/06/2017, Ivry Sur Seine)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Marteau (5 kg)</td>
+                    <td></td>
+                    <td>29m97 (BEAUDOIN Cedric, 17/12/2006, Joinville-Le-Pont)</td>
+                    <td>37m24 (BEAUDOIN Cedric, 02/12/2007, Montreuil-Sous-Bois)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Marteau (6 kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>32m52 (TOUZART Antoine, 16/10/2021, Sens)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Marteau (7.26 kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td>13m51 (TOUZART Antoine, 29/04/2018, Antony)</td>
+                    <td>14m31 (FOSCHIANI Louis, 13/04/2019, Joinville Le Pont)</td>
+                    <td>13m65 (DJEMAI Adam, 27/04/2014, Antony)</td>
+                    <td>8m94 (GLASBERG Romain, 08/05/2023, Bonneuil Sur Marne)</td>
+                    <td>9m73 (CONGARD Yves, 03/05/2015, Antony)</td>
+                </tr>
+                <tr>
+                    <td>Medecin ball -salle</td>
+                    <td>8m40 (HIRSCH Ethan, 15/12/2018, Paris)</td>
+                    <td>9m20 (HAMAM Mohamed El-Eddy, 17/12/2017, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Octathlon MH</td>
+                    <td></td>
+                    <td>2 284 pts (FIGUEIRA Gautier, 28/04/2007, L&#39;hay-Les-Roses)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Penta Lg MH-Salle</td>
+                    <td>2 121 pts (NGOMA KOUTALOU Paul-Tresor, 28/11/2015, Mondeville)</td>
+                    <td>2 413 pts (NGOMA KOUTALOU Paul-Tresor, 20/03/2016, Rennes)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Penta MF-Salle</td>
+                    <td></td>
+                    <td>1 395 pts (NIENAT Lawrence, 21/01/2012, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Perche</td>
+                    <td></td>
+                    <td></td>
+                    <td>3m30 (BEAUDOIN Cedric, 14/06/2008, Cormeilles-En-Parisis)</td>
+                    <td>3m40 (BEAUDOIN Cedric, 10/05/2009, Noisy-Le-Grand)</td>
+                    <td>3m60 (BEAUDOIN Cedric, 26/05/2013, Noisy Le Grand)</td>
+                    <td>3m60 (BOBET Gregory, 08/05/2011, Noisy Le Grand)</td>
+                    <td>1m80 (PATERNOSTRE Jeremy, 19/05/2024, Villejuif)</td>
+                </tr>
+                <tr>
+                    <td>Poids (2 kg)</td>
+                    <td>7m63 (NIENAT Lawrence, 31/01/2010, Fort-De-France)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (3 kg)</td>
+                    <td>9m74 (NGOMA KOUTALOU Paul-Tresor, 13/06/2015, Herouville Saint Clai)</td>
+                    <td>7m23 (TIERSEN Emma, 07/06/2015, Ivry Sur Seine)</td>
+                    <td>7m76 (TIERSEN Emma, 15/05/2016, L&#39;hay Les Roses)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (4 kg)</td>
+                    <td>5m27 (GONTHIER Dylan, 18/11/2017, Saint Denis)</td>
+                    <td>9m38 (NGOMA KOUTALOU Paul-Tresor, 14/05/2016, Herouville Saint Clai)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (5 kg)</td>
+                    <td></td>
+                    <td>9m82 (BEAUDOIN Cedric, 01/10/2006, Aulnay-Sous-Bois)</td>
+                    <td>9m47 (FIGUEIRA Gautier, 18/10/2008, Maisons-Alfort)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (6 kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td>10m87 (BEAUDOIN Cedric, 05/10/2008, Antony)</td>
+                    <td>9m64 (NIENAT Obrian, 06/04/2014, Maisons Alfort)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (7.26 kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td>6m84 (RENELLE Tony, 01/04/2013, L&#39;hay Les Roses)</td>
+                    <td>8m95 (FOSCHIANI Louis, 13/04/2019, Joinville Le Pont)</td>
+                    <td>9m68 (NIENAT Obrian, 29/05/2016, Tremblay En France)</td>
+                    <td>9m86 (BOBET Gregory, 19/06/2009, L&#39;isle-Adam)</td>
+                    <td>8m03 (PATERNOSTRE Jeremy, 18/05/2024, Villejuif)</td>
+                </tr>
+                <tr>
+                    <td>Tetra Lg BM-Salle</td>
+                    <td>693 pts (DUCROIZET Florian, 28/01/2012, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Tetrathlon Disque BM</td>
+                    <td>858 pts (GONTHIER Dylan, 21/05/2017, Saint Paul)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Tetrathlon Jav. BF</td>
+                    <td>1 129 pts (NIENAT Lawrence, 01/05/2010, Fort-De-France)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triathlon Table 2017</td>
+                    <td>119 pts (NGOMA KOUTALOU Paul-Tresor, 04/10/2015, Saint-Lo)</td>
+                    <td>106 pts (NGOMA KOUTALOU Paul-Tresor, 08/07/2016, Saint Florentin)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triathlon U14-U16</td>
+                    <td>96 pts (COUBARD Adrien, 03/06/2023, Bonneuil Sur Marne)</td>
+                    <td>102 pts (COUBARD Adrien, 29/03/2025, Ivry Sur Seine)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triathlon table 2009</td>
+                    <td>53 pts (NIENAT Lawrence, 18/04/2009, Fort-De-France)</td>
+                    <td>59 pts (FIGUEIRA Gautier, 03/06/2007, Créteil)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triple saut</td>
+                    <td>9m79 (nc) (FRANCO Estéban, 08/05/2017, Arcueil)</td>
+                    <td>9m48 (-0.9) (GONTHIER Dylan, 10/02/2018, Saint Paul)</td>
+                    <td>9m90 (-0.0) (VILLIGER Antonin, 03/05/2015, Antony)</td>
+                    <td>9m79 (-0.0) (VILLIGER Antonin, 29/04/2018, Antony)</td>
+                    <td>9m05 (F) (+4.1) (EDDEAIF Redouane, 13/04/2019, Joinville Le Pont)</td>
+                    <td>9m99 (+0.0) (VILLIGER Antonin, 27/04/2025, Cachan)</td>
+                    <td></td>
+                </tr>
+            </table>
+          </table>
+        </div>
+      </div>
+      <!-- Femmes Salle -->
+      <div class="tab-pane fade" id="femmes-salle" role="tabpanel">
+        <div class="table-responsive">
+          <h5 class="mb-3">Records Femmes Salle</h5>
+          <!-- Tableau Records femmes salle -->
+          
+          <table>
+            <table>
+                <tr>
+                    <td>Discipline</td>
+                    <td>PO</td>
+                    <td>BE</td>
+                    <td>MI</td>
+                    <td>CA</td>
+                    <td>JU</td>
+                    <td>ES</td>
+                    <td>SE</td>
+                </tr>
+                <tr>
+                    <td>50m - Salle</td>
+                    <td>8&quot;59 (COURREGES Juliette, 01/12/2019, Paris)</td>
+                    <td>7&quot;1 (CHIPAN Zoe, 18/01/2014, Paris)</td>
+                    <td>7&quot;2 (CHIPAN Zoe, 24/01/2015, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60m - Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>8&quot;39 (ANANDARAJA Milojan, 01/12/2013, Eaubonne)</td>
+                    <td>8&quot;78 (CHHIENG Marine, 01/12/2018, Eaubonne)</td>
+                    <td>8&quot;42 (PEREZ Valentine, 14/02/2015, Nogent Sur Oise)</td>
+                    <td>8&quot;47 (PEREZ Valentine, 21/01/2017, Eaubonne)</td>
+                    <td>8&quot;53 (PEREZ Valentine, 14/01/2023, Fronton)</td>
+                </tr>
+                <tr>
+                    <td>Hauteur - Salle</td>
+                    <td></td>
+                    <td>m94 (ROSELMAC Rebecca, 28/01/2012, Paris)</td>
+                    <td>1m33 (HERVE Juliette, 06/02/2016, Paris)</td>
+                    <td>1m40 (MUAKA Leisly, 03/01/2010, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Longueur - Salle</td>
+                    <td>3m10 (COURREGES Juliette, 01/12/2019, Paris)</td>
+                    <td>4m05 (CHIPAN Zoe, 18/01/2014, Paris)</td>
+                    <td>4m33 (CHIPAN Zoe, 27/11/2016, Eaubonne)</td>
+                    <td>4m34 (MUAKA Leisly, 29/11/2009, Eaubonne)</td>
+                    <td>4m73 (PEREZ Valentine, 19/11/2016, Eaubonne)</td>
+                    <td>4m62 (PEREZ Valentine, 01/12/2018, Eaubonne)</td>
+                    <td>4m66 (PEREZ Valentine, 09/01/2022, Mondeville)</td>
+                </tr>
+                <tr>
+                    <td>Perche - Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>1m55 (RODRIGUES Camille, 14/12/2008, Mâcon)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (2 kg) - Salle</td>
+                    <td></td>
+                    <td>8m59 (CHIPAN Zoe, 18/01/2014, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (3 kg) - Salle</td>
+                    <td></td>
+                    <td>6m47 (FOSSE Sarah, 12/12/2004, Trappes)</td>
+                    <td>7m98 (FOSSE Sarah, 12/11/2005, Eaubonne)</td>
+                    <td>5m60 (HILLION Manon, 19/03/2016, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (4 kg) - Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>6m76 (PEREZ Valentine, 06/12/2015, Eaubonne)</td>
+                    <td>6m73 (BEL LALLAHOM Maeva, 26/11/2017, Eaubonne)</td>
+                    <td>6m08 (GERARD Anne-Laure, 10/03/2019, Val De Reuil)</td>
+                </tr>
+                <tr>
+                    <td>Triathlon - Salle Table 2017</td>
+                    <td></td>
+                    <td>94 pts (CHIPAN Zoe, 18/01/2014, Paris)</td>
+                    <td>75 pts (CHIPAN Zoe, 24/01/2015, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triathlon - Salle U14-U16</td>
+                    <td>50 pts (COURREGES Juliette, 01/12/2019, Paris)</td>
+                    <td>37 pts (BELLAHCENE Zayneb, 30/11/2024, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triathlon table 2009 - Salle</td>
+                    <td></td>
+                    <td>46 pts (FOSSE Sarah, 12/12/2004, Trappes)</td>
+                    <td>42 pts (FOSSE Sarah, 12/11/2005, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triple saut - Salle</td>
+                    <td></td>
+                    <td>8m30 (TABABI Fatima, 24/01/2016, Paris)</td>
+                    <td>9m29 (PEREZ Valentine, 18/03/2012, Paris)</td>
+                    <td>8m87 (COLTEE Emeline, 19/03/2016, Eaubonne)</td>
+                    <td>9m73 (PEREZ Valentine, 11/12/2016, Paris)</td>
+                    <td>9m95 (PEREZ Valentine, 25/11/2018, Eaubonne)</td>
+                    <td>9m93 (PEREZ Valentine, 05/12/2021, Cherbourg Octeville)</td>
+                </tr>
+            </table>
+          </table>
+        </div>
+      </div>
+      <!-- Femmes Plein Air -->
+      <div class="tab-pane fade" id="femmes-pleinair" role="tabpanel">
+        <div class="table-responsive">
+          <h5 class="mb-3">Records Femmes Plein Air</h5>
+          <!-- Tableau Records feminin plein air -->
+          
+          <table>
+            <table>
+                <tr>
+                    <td>Discipline</td>
+                    <td>BE</td>
+                    <td>MI</td>
+                    <td>CA</td>
+                    <td>JU</td>
+                    <td>ES</td>
+                    <td>SE</td>
+                    <td>MA</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1 000m</td>
+                    <td>4&#39;49&quot;8 (BAILLE Angelique, 07/10/2006, Joinville-Le-Pont)</td>
+                    <td>4&#39;27&quot;88 (FOSSE Sarah, 09/04/2005, Elancourt)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1 000m Piste Courte</td>
+                    <td>3&#39;42&quot;6 (TABABI Fatima, 30/01/2016, Paris)</td>
+                    <td>3&#39;52&quot;8 (PEREZ Valentine, 21/01/2012, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1 500m</td>
+                    <td></td>
+                    <td></td>
+                    <td>6&#39;11&quot;87 (BUTIN Coralie, 31/05/2015, Paris)</td>
+                    <td>5&#39;28&quot;55 (KAMDEM Bobda, 19/06/2005, Créteil)</td>
+                    <td></td>
+                    <td>6&#39;31&quot;94 (LEBON Sonia, 03/05/2015, Antony)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1 500m Piste Courte</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>6&#39;31&quot;71 (LEBON Sonia, 14/02/2015, Nogent Sur Oise)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1/2 Marathon</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>2h23&#39;08&quot; (BERHAULT Alice, 09/03/2025, Paris)</td>
+                    <td>3h03&#39;06&quot; (MEZOUANI Marie-Rose, 03/03/2013, Paris)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>10 Km Route</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>58&#39;00&quot; (F) (COLTEE Emeline, 01/05/2019, Combs La Ville)</td>
+                    <td>1h03&#39;10&quot; (BUTIN Coralie, 10/06/2018, Paris)</td>
+                    <td>40&#39;17&quot; (KAMDEM Bobda, 24/11/2019, Drancy)</td>
+                    <td>1h01&#39;28&quot; (MEZOUANI Marie-Rose, 07/10/2012, Paris)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>100m</td>
+                    <td>16&quot;51 (-1.1) (BOTAS Meiline, 08/05/2015, Arcueil)</td>
+                    <td>16&quot;50 (-0.5) (ROSELMAC Rebecca, 11/05/2014, Villejuif)</td>
+                    <td>16&quot;11 (F) (+2.1) (HERVE Marine, 12/04/2015, Maisons Alfort)</td>
+                    <td>16&quot;03 (+ 1.4) (MARTINS Mathilde, 29/04/2018, Antony)</td>
+                    <td>14&quot;44 (+1.8) (BEL LALLAHOM Maeva, 02/06/2016, Le Plessis Trevise)</td>
+                    <td>16&quot;15 (+0.0) (GERARD Anne-Laure, 01/07/2018, Saint Denis)</td>
+                    <td>15&quot;52 (-0.4) (GUANNEL Paulette, 30/04/2010, Bonneuil-Sur-Marne)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>100m Haies (76)</td>
+                    <td></td>
+                    <td></td>
+                    <td>18&quot;17 (+0.0) (MUAKA Leisly, 04/06/2010, Bonneuil-Sur-Marne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>100m Haies (84)</td>
+                    <td></td>
+                    <td></td>
+                    <td>20&quot;60 (-2.3) (BOTAS Meiline, 13/04/2019, Joinville Le Pont)</td>
+                    <td>17&quot;78 (F) (+2.6) (MARQUES Zara, 14/06/2015, Montgeron)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>120m</td>
+                    <td></td>
+                    <td>21&quot;10 (-2.2) (COURREGES Juliette, 01/10/2022, Thiais)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>15 Km Route</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>1h35&#39;32&quot; (COLTEE Emeline, 24/02/2019, Charenton Le Pont)</td>
+                    <td></td>
+                    <td>1h07&#39;01&quot; (BILALI Karima, 13/02/2005, Charenton Le Pont)</td>
+                    <td>1h11&#39;56&quot; (BERTHOLET Isabelle, 11/02/2024, Charenton Le Pont)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2 000m</td>
+                    <td></td>
+                    <td>7&#39;23&quot;83 (LAUNOY Justine, 03/06/2007, Dammartin-En-Goele)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>20 Km Route</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>1h48&#39;41&quot; (BILALI Karima, 27/10/2019, Marseille)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>200m</td>
+                    <td></td>
+                    <td></td>
+                    <td>35&quot;01 (+1.3) (STAWOWY Emma, 24/04/2022, Le Plessis Robinson)</td>
+                    <td>30&quot;88 (+0.6) (BEL LALLAHOM Maeva, 31/05/2014, Ivry Sur Seine)</td>
+                    <td>29&quot;56 (- 2.4) (PEREZ Valentine, 30/04/2017, Antony)</td>
+                    <td>31&quot;97 (+ 0.6) (GERARD Anne-Laure, 29/04/2018, Antony)</td>
+                    <td>38&quot;62 (F) (+2.7) (LEBON Sonia, 24/04/2022, Le Plessis Robinson)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>200m Haies (76)</td>
+                    <td>35&quot;4 (NC) (MUAKA Leisly, 07/10/2006, Joinville-Le-Pont)</td>
+                    <td>37&quot;82 (+0.3) (BINET Louise, 14/05/2015, Joinville Le Pont)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>200m Piste Courte</td>
+                    <td></td>
+                    <td>26&quot;91 (ANANDARAJA Milojan, 30/11/2013, Eaubonne)</td>
+                    <td>27&quot;90 (PEREZ Valentine, 30/11/2014, Eaubonne)</td>
+                    <td>28&quot;04 (PEREZ Valentine, 18/01/2015, Eaubonne)</td>
+                    <td></td>
+                    <td>27&quot;32 (PEREZ Valentine, 21/12/2024, Aubiere)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3 000m</td>
+                    <td></td>
+                    <td></td>
+                    <td>12&#39;16&quot;0 (LAUNOY Justine, 14/06/2009, Conflans-Ste-Honorine)</td>
+                    <td></td>
+                    <td></td>
+                    <td>11&#39;06&quot;61 (KAMDEM Bobda, 16/05/2017, Malakoff)</td>
+                    <td>14&#39;52&quot;91 (ELIARD Caroline, 30/04/2017, Antony)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3 000m Marche</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>19&#39;18&quot;50 (LESPIAT Amelie, 01/05/2016, Antony)</td>
+                    <td></td>
+                    <td></td>
+                    <td>20&#39;11&quot;88 (BILALI Karima, 08/05/2023, Bonneuil Sur Marne)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>300m</td>
+                    <td></td>
+                    <td>50&quot;1 (LIBER Melanie, 07/10/2006, Joinville-Le-Pont)</td>
+                    <td>49&quot;63 (KAMDEM Bobda, 01/07/2004, Nogent-Sur-Marne)</td>
+                    <td>47&quot;18 (MARQUES Zara, 10/04/2016, Maisons Alfort)</td>
+                    <td></td>
+                    <td>56&quot;01 (LEBON Sonia, 10/04/2016, Maisons Alfort)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>400m</td>
+                    <td></td>
+                    <td></td>
+                    <td>70&quot;50 (DEVILLEPOIX Laura, 08/05/2023, Bonneuil Sur Marne)</td>
+                    <td>73&quot;22 (BETTENFELT Charlotte, 03/05/2015, Antony)</td>
+                    <td></td>
+                    <td>80&quot;42 (LEBON Sonia, 16/05/2015, Ivry Sur Seine)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>400m Haies (76)</td>
+                    <td></td>
+                    <td></td>
+                    <td>74&quot;03 (COLTEE Emeline, 03/06/2017, Montgeron)</td>
+                    <td>75&quot;87 (MARQUES Zara, 04/06/2016, Creteil)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>400m Piste Courte</td>
+                    <td></td>
+                    <td>70&quot;40 (COLTEE Emeline, 21/11/2015, Eaubonne)</td>
+                    <td>69&quot;18 (BETTENFELT Charlotte, 29/11/2014, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td>80&quot;48 (LEBON Sonia, 15/11/2014, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>5 Km Route</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>21&#39;35&quot; (PEREZ Valentine, 17/03/2024, Tulle)</td>
+                    <td>20&#39;22&quot; (KAMDEM Bobda, 16/10/2022, Fontenay Sous Bois)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m</td>
+                    <td>9&quot;35 (NC) (BERHAULT Alice, 30/03/2014, Le Plessis Trevise)</td>
+                    <td>8&quot;65 (NC) (ROSELMAC Rebecca, 24/05/2014, L&#39;hay Les Roses)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (65)</td>
+                    <td>10&quot;5 (NC) (TABABI Fatima, 04/04/2015, Le Plessis Trevise)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (65)-Salle</td>
+                    <td>11&quot;4 (BOTAS Meiline, 24/01/2016, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>50m Haies (76)-Salle</td>
+                    <td></td>
+                    <td>9&quot;7 (PEREZ Valentine, 21/01/2012, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60m Haies (76)-Salle</td>
+                    <td></td>
+                    <td>11&quot;87 (COLTEE Emeline, 06/12/2015, Eaubonne)</td>
+                    <td>11&quot;06 (COLTEE Emeline, 12/03/2017, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>60m Haies (84)-Salle</td>
+                    <td></td>
+                    <td></td>
+                    <td>11&quot;40 (MARQUES Zara, 30/11/2014, Eaubonne)</td>
+                    <td>10&quot;54 (MARQUES Zara, 06/12/2015, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>800m</td>
+                    <td></td>
+                    <td></td>
+                    <td>2&#39;57&quot;89 (CORROYER Mathilde, 03/05/2015, Antony)</td>
+                    <td>2&#39;35&quot;95 (KAMDEM Bobda, 03/06/2005, St-Denis)</td>
+                    <td>2&#39;37&quot;44 (LAUNOY Justine, 29/04/2012, Savigny Le Temple)</td>
+                    <td>3&#39;13&quot;77 (LEBON Sonia, 01/05/2016, Antony)</td>
+                    <td>3&#39;17&quot;93 (LEBON Sonia, 29/04/2018, Antony)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>800m Piste Courte</td>
+                    <td></td>
+                    <td>2&#39;50&quot;62 (BUTIN Coralie, 30/11/2013, Eaubonne)</td>
+                    <td>2&#39;38&quot;5 (KAMDEM Bobda, 10/12/2004, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td>2&#39;33&quot;37 (KAMDEM Bobda, 25/11/2018, Eaubonne)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>80m</td>
+                    <td></td>
+                    <td>13&quot;55 (F) (+2.6) (PERRIMOND Lilou, 29/03/2025, Ivry Sur Seine)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>80m Haies (76)</td>
+                    <td></td>
+                    <td>15&quot;12 (+0.1) (BOTAS Meiline, 20/06/2018, Bonneuil Sur Marne)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Disque (0.6 kg)</td>
+                    <td>9m63 (BOTAS Meiline, 03/04/2016, Le Plessis Trevise)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Disque (0.8 kg)</td>
+                    <td></td>
+                    <td>22m25 (TABABI Fatima, 10/06/2017, Ivry Sur Seine)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Disque (1.0 kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td>9m91 (BETTENFELT Charlotte, 08/06/2014, L&#39;hay Les Roses)</td>
+                    <td></td>
+                    <td></td>
+                    <td>19m49 (LEBON Sonia, 08/05/2011, Rennes)</td>
+                    <td>21m04 (GERARD Anne-Laure, 27/04/2025, Cachan)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Hauteur</td>
+                    <td>m96 (TACO Anais, 14/10/2006, Charenton-Le-Pont)</td>
+                    <td>1m25 (TABABI Fatima, 25/05/2017, L&#39;hay Les Roses)</td>
+                    <td>1m40 (MUAKA Leisly, 15/05/2010, Ivry-Sur-Seine)</td>
+                    <td>1m40 (MUAKA Leisly, 30/04/2011, Le Plessis Robinson)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Javelot (400 g)</td>
+                    <td>9m99 (BERHAULT Alice, 30/03/2014, Le Plessis Trevise)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Javelot (500 g)</td>
+                    <td>10m68 (LEROY Jessica, 07/10/2006, Joinville-Le-Pont)</td>
+                    <td>9m25 (BEL LALLAHOM Maeva, 27/03/2010, Ozoir-La-Ferrière)</td>
+                    <td>9m95 (MARTINS Mathilde, 15/05/2016, L&#39;hay Les Roses)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Javelot (600 g)</td>
+                    <td></td>
+                    <td></td>
+                    <td>8m87 (BUTIN Coralie, 03/05/2015, Antony)</td>
+                    <td>16m18 (CHHIENG Marine, 13/04/2019, Joinville Le Pont)</td>
+                    <td>14m04 (BEL LALLAHOM Maeva, 28/05/2016, Ivry Sur Seine)</td>
+                    <td>18m85 (LAUNOY Justine, 28/04/2019, Ocquerre)</td>
+                    <td>8m44 (KLEIN Olivia, 29/04/2018, Antony)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Kids Athlétics</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Longueur</td>
+                    <td>4m61 (NC) (CHIPAN Zoe, 21/06/2014, Alfortville)</td>
+                    <td>4m06 (NC) (FOSSE Sarah, 25/05/2005, Les Clayes-Sous-Bois)</td>
+                    <td>4m87 (+1.5) (PEREZ Valentine, 27/04/2014, Antony)</td>
+                    <td>4m69 (+0.0) (PEREZ Valentine, 28/05/2016, Ivry Sur Seine)</td>
+                    <td>4m98 (+2.0) (PEREZ Valentine, 28/05/2017, Maisons Alfort)</td>
+                    <td>5m05 (0.0) (PEREZ Valentine, 14/04/2024, Brive La Gaillarde)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Marathon</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>4h32&#39;49&quot; (RABAUD Sandrine, 15/04/2007, Paris)</td>
+                    <td>7h23&#39;20&quot; (CHAINE Ingrid, 11/11/2018, Athenes (GRE))</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Marteau (4 kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>15m08 (MARQUES Zara, 01/05/2016, Antony)</td>
+                    <td>20m58 (BEL LALLAHOM Maeva, 29/04/2018, Antony)</td>
+                    <td>33m90 (GERARD Anne-Laure, 30/05/2021, Antony)</td>
+                    <td>35m80 (GERARD Anne-Laure, 08/10/2023, Ocquerre)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Marteau Lourd (9kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>9m78 (GERARD Anne-Laure, 15/10/2023, Maisons Alfort)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Medecin ball -salle</td>
+                    <td>9m00 (TABABI Fatima, 24/01/2016, Paris)</td>
+                    <td>5m60 (BOTAS Meiline, 15/01/2017, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Penta MF-Salle</td>
+                    <td></td>
+                    <td>359 pts (BOURREAU Marion, 21/01/2012, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>PentaLancers VF</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>1 552 pts (GERARD Anne-Laure, 15/10/2023, Maisons Alfort)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Perche</td>
+                    <td></td>
+                    <td>1m65 (RODRIGUES Camille, 25/10/2008, Mâcon)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>1m80 (LAUNOY Justine, 21/05/2017, Nemours)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (2 kg)</td>
+                    <td>8m85 (CHIPAN Zoe, 10/05/2014, Joinville Le Pont)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (3 kg)</td>
+                    <td>6m71 (MUAKA Leisly, 24/09/2006, Chevilly-Larue)</td>
+                    <td>7m79 (HERVE Juliette, 15/05/2016, L&#39;hay Les Roses)</td>
+                    <td>6m21 (BINET Louise, 15/05/2016, L&#39;hay Les Roses)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Poids (4 kg)</td>
+                    <td></td>
+                    <td></td>
+                    <td>6m52 (MINARD Molly, 08/05/2023, Bonneuil Sur Marne)</td>
+                    <td>6m12 (BEL LALLAHOM Maeva, 31/05/2015, Paris)</td>
+                    <td>6m94 (BEL LALLAHOM Maeva, 29/04/2018, Antony)</td>
+                    <td>6m77 (BEL LALLAHOM Maeva, 25/05/2019, Creteil)</td>
+                    <td>6m65 (GERARD Anne-Laure, 21/06/2023, Chelles)</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Tetrathlon BF-Salle</td>
+                    <td>879 pts (CELESTE Loriana, 28/01/2012, Paris)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triathlon Table 2017</td>
+                    <td>104 pts (CHIPAN Zoe, 21/06/2014, Alfortville)</td>
+                    <td>66 pts (TABABI Fatima, 10/06/2017, Ivry Sur Seine)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triathlon U14-U16</td>
+                    <td></td>
+                    <td>62 pts (TABABI Fatima, 07/04/2018, Le Plessis Trevise)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triathlon table 2009</td>
+                    <td>65 pts (LAUNOY Justine, 01/06/2005, Joinville-Le-Pont)</td>
+                    <td>59 pts (LAUNOY Justine, 28/05/2006, Joinville-Le-Pont)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Triple saut</td>
+                    <td>8m72 (NC) (CHIPAN Zoe, 30/03/2014, Le Plessis Trevise)</td>
+                    <td>8m75 (+0.7) (DARVES Caroline, 15/05/2016, L&#39;hay Les Roses)</td>
+                    <td>9m95 (NC) (MUAKA Leisly, 10/04/2010, Le Plessis-Robinson)</td>
+                    <td>9m18 (NC) (MUAKA Leisly, 30/04/2011, Le Plessis Robinson)</td>
+                    <td>10m56 (-0.3) (PEREZ Valentine, 27/05/2017, Maisons Alfort)</td>
+                    <td>9m82 (+0.0) (PEREZ Valentine, 12/06/2021, Avranches)</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Légende des catégories -->
+    <div class="cat-table table-responsive mt-4">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>CATEGORIE</th>
+            <th>CODE</th>
+            <th>ANNEE DE NAISSANCE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Masters</td><td>MA</td><td>1990 et avant</td></tr>
+          <tr><td>Seniors</td><td>SE</td><td>1991 à 2002</td></tr>
+          <tr><td>U23 / Espoirs</td><td>ES</td><td>2003 à 2005</td></tr>
+          <tr><td>U20 / Juniors</td><td>JU</td><td>2006 et 2007</td></tr>
+          <tr><td>U18 / Cadets</td><td>CA</td><td>2008 et 2009</td></tr>
+          <tr><td>U16 / Minimes</td><td>MI</td><td>2010 et 2011</td></tr>
+          <tr><td>U14 / Benjamins</td><td>BE</td><td>2012 et 2013</td></tr>
+          <tr><td>U12 / Poussins</td><td>PO</td><td>2014 et 2015</td></tr>
+          <tr><td>Eveil Athlétique</td><td>EA</td><td>2016 à 2018</td></tr>
+          <tr><td>Baby Athlé</td><td>BB</td><td>2019 et après</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
