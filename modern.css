@@ -525,6 +525,25 @@ span {
   min-height: 360px;
 }
 
+/* Dedicated CV layout: keep the PDF viewer large enough to avoid page scrolling. */
+body.cv-page .page-hero {
+  padding: 28px 0 10px;
+}
+
+body.cv-page .section {
+  padding: 12px 0;
+}
+
+body.cv-page .cv-media-box {
+  height: calc(100vh - 250px);
+  padding: 10px;
+}
+
+body.cv-page .cv-media-box embed {
+  height: 100%;
+  min-height: 0;
+}
+
 .meta-list,
 .pill-list,
 .doc-list {
@@ -706,5 +725,9 @@ span {
 
   .quick-links {
     grid-template-columns: 1fr;
+  }
+
+  body.cv-page .cv-media-box {
+    height: calc(100vh - 290px);
   }
 }
