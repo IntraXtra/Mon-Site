@@ -1,225 +1,130 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio de Mohamed-El-Eddy Hamam, etudiant en cycle ingénieur réseau et sécurité.">
+  <title>Portfolio | Mohamed-El-Eddy Hamam</title>
+  <link rel="stylesheet" href="modern.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html">M.E. Hamam</a>
+      <nav aria-label="Navigation principale">
+        <ul class="nav-links">
+          <li><a href="index.html" data-i18n data-fr="Accueil" data-en="Home">Accueil</a></li>
+          <li><a href="experience.html" data-i18n data-fr="Expérience" data-en="Experience">Expérience</a></li>
+          <li><a href="competences.html" data-i18n data-fr="Compétences" data-en="Skills">Compétences</a></li>
+          <li><a href="cv.html" data-i18n data-fr="CV" data-en="Resume">CV</a></li>
+          <li><a href="contacts.html" data-i18n data-fr="Contacts" data-en="Contact">Contacts</a></li>
+        </ul>
+      </nav>
+      <button id="langToggle" class="lang-toggle" type="button" aria-label="Changer la langue" data-i18n data-fr="EN" data-en="FR" data-aria-fr="Changer la langue" data-aria-en="Change language">EN</button>
+    </div>
+  </header>
 
-        <title>Mon Portfolio</title>
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <article class="hero-panel reveal">
+          <p class="kicker">Portfolio 2026</p>
+          <h1>Mohamed-El-Eddy Hamam</h1>
+          <p class="hero-sub" data-i18n data-fr="Profil polyvalent IT, sécurité et support. En dernière année de cycle ingénieur réseaux et sécurité, je contribue à des environnements exigeants avec une approche structurée, orientée résultats et qualité de service." data-en="Versatile IT, security and support profile. In my final year of network and security engineering, I contribute to demanding environments with a structured, results-driven and service-focused approach.">
+            Profil polyvalent IT, sécurité et support. En dernière année de cycle ingénieur réseaux et sécurité, je contribue à des environnements exigeants avec une approche structurée, orientée résultats et qualité de service.
+          </p>
+          <ul class="hero-facts">
+            <li data-i18n data-fr="22 ans" data-en="22 years old">22 ans</li>
+            <li data-i18n data-fr="Île-de-France" data-en="Ile-de-France">Île-de-France</li>
+            <li data-i18n data-fr="Permis B" data-en="Driving license B">Permis B</li>
+            <li data-i18n data-fr="Dernière année d'ingénieur" data-en="Final engineering year">Dernière année d'ingénieur</li>
+          </ul>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="experience.html" data-i18n data-fr="Voir mes expériences" data-en="View my experience">Voir mes expériences</a>
+            <a class="btn btn-ghost" href="competences.html" data-i18n data-fr="Voir mes certifications" data-en="View my certifications">Voir mes certifications</a>
+            <a class="btn btn-ghost" href="contacts.html" data-i18n data-fr="Me contacter" data-en="Contact me">Me contacter</a>
+          </div>
+        </article>
 
-        <link rel="stylesheet" href="style.css">       
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    </head>
-    <body> 
-        <header>
-            
-            <nav>
-                <ul>
-                    <link rel="stylesheet" href="style.css">
-                    <li id="logo"><a href="index.html">
-                            ACCUEIL
-                        </a>
-                    </li>
-                    <li><a href="contacts.html">
-                        Contacts
-                    </a>
-                    </li>
-                    <li><a href="cv.html">
-                            CV
-                        </a>
-                    </li>
-                    <li><a href="competences.html">
-                        Competences
-                    </a>
-                    </li>
-                    <li><a href="experience.html">
-                        Experience
-                    </a>
-                    </li>  
-                    <li><a href="travaux.html">
-                        Travaux
-                    </a>
-                    </li> 
-          
-                 </ul>
-    
-            </nav>
+        <aside class="hero-photo reveal" aria-label="Photo de presentation">
+          <img src="imgg/moi.jpeg" alt="Photo de Mohamed-El-Eddy Hamam">
+          <div class="hero-badge" data-i18n data-fr="Réseaux | Sécurité | Systèmes" data-en="Networks | Security | Systems">Réseaux | Sécurité | Systèmes</div>
+        </aside>
+      </div>
+    </section>
 
-            <div id="imagePrincipale">
-                <h1>HAMAM Mohamed-El-Eddy</h1>
-                <div id="Presentation"></div>
-                <h3>Portfolio</h3>
-            </div>
+    <section class="section">
+      <div class="container section-card reveal">
+        <h2 data-i18n data-fr="Profil & Priorités" data-en="Profile & Priorities">Profil & Priorités</h2>
+        <div class="highlight-grid">
+          <div class="stat">
+            <strong data-i18n data-fr="Opérations réseau sécurisées" data-en="Secure network operations">Opérations réseau sécurisées</strong>
+            <span data-i18n data-fr="Pilotage d'environnements critiques, avec une priorité constante donnée à la disponibilité et à la sécurité." data-en="Managing critical environments with a constant focus on availability and security.">Pilotage d'environnements critiques, avec une priorité constante donnée à la disponibilité et à la sécurité.</span>
+          </div>
+          <div class="stat">
+            <strong data-i18n data-fr="Architectures & VPN" data-en="Architectures & VPN">Architectures & VPN</strong>
+            <span data-i18n data-fr="Évolution d'architectures réseau, interconnexions partenaires et mise en place de VPN." data-en="Network architecture evolution, partner interconnections and VPN implementation.">Évolution d'architectures réseau, interconnexions partenaires et mise en place de VPN.</span>
+          </div>
+          <div class="stat">
+            <strong data-i18n data-fr="Gestion d'incidents" data-en="Incident management">Gestion d'incidents</strong>
+            <span data-i18n data-fr="Diagnostic, remédiation et amélioration continue sur les incidents réseau et infrastructures IT." data-en="Diagnosis, remediation and continuous improvement for network and core IT incidents.">Diagnostic, remédiation et amélioration continue sur les incidents réseau et infrastructures IT.</span>
+          </div>
+          <div class="stat">
+            <strong data-i18n data-fr="Certifications reconnues" data-en="Recognized certifications">Certifications reconnues</strong>
+            <span data-i18n data-fr="JNCIA-Junos, CEH et CCSA pour consolider une expertise technique orientée sécurité." data-en="JNCIA-Junos, CEH and CCSA to reinforce a security-focused technical expertise.">JNCIA-Junos, CEH et CCSA pour consolider une expertise technique orientée sécurité.</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        </header>
-        <section id="Resume">
-            <link rel="stylesheet" href="style.css">
-            <div id="texte1">
-                <h2>Présentation</h2>
-                <p>
-                    <img src="imgg/MOI.jpg" height="280"><a href=""></a>
-                </p>
-                <p><h3>Qui suis-je?</h3>
-                    <h4>
-                    <br>Je me présente, je suis HAMAM Mohamed-El-Eddy, étudiant en cycle ingénieur Réseau et Sécurité à l'ESIEE, Paris.                    
-                    <br> Je fais cette formation en apprentissage chez Sopra Steria Group         
-                    <br>J'ai toujours aimé découvrir de nouveaux univers c'est pourquoi jusqu'à présent je découvre l'univers de l'informatique afin d'en faire mon métier.                    
-                    <br><br><br> Dans ce Portfolio vous pourrez en apprendre un peu plus sur moi, que cela soit au sujet de mes expériences, mes motivations, mes compétences ou bien des moyens de me contacter.                    
+    <section class="section">
+      <div class="container section-card reveal">
+        <h2 data-i18n data-fr="Focus Expérience: Sopra Steria" data-en="Experience Spotlight: Sopra Steria">Focus Expérience: Sopra Steria</h2>
+        <p class="hero-sub" data-i18n data-fr="Interventions sur des projets réseau et sécurité: ouvertures et fermetures de sites, évolution d'architectures, mise en oeuvre et troubleshooting VPN." data-en="Hands-on contributions to network and security projects: site openings and closures, architecture evolution, VPN deployment and troubleshooting.">
+          Interventions sur des projets réseau et sécurité: ouvertures et fermetures de sites, évolution d'architectures, mise en oeuvre et troubleshooting VPN.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="experience.html" data-i18n data-fr="Voir le détail des missions" data-en="See mission details">Voir le détail des missions</a>
+        </div>
+      </div>
+    </section>
 
-                
-                </h4></p>
-            </div>
-            <div id="Palmares">
-                <div class="ImageSDC1">
-                    <h3>Terminale Generale</h3>
-                    <h4>Lycée Samuel de Champlain</h4>
-                    <table>
-                        <td>
-                            <a hreflang="#"><img src="imgg/SamuelDeChamplain.jpg"height = "180px" alt="logo">
-                        </td>
-                        <td><h4>
-                            De Septembre 2018 à Juillet 2021, j'ai été scolarisé au lycée Samuel de Champlain à Chennevières Sur Marne 94430.                        
-                            <br> J'y ai donc fait mes années de Seconde, Première ainsi que Terminale dans un cycle général.                                                 
-                            <br> En Terminale j'ai pu assimiler toutes les connaissances requises afin d'obtenir le Baccalauréat Générale spécialités Mathématiques et Géopolitique.                        
-                        
-                        </h4>
-                        </td>
-                    </table>
-                <div class="ImageSDC2">
-                    <h3>BTS SIO 1e Année</h3>
-                    <h4>Institution Saint Aspais</h4>
-                     <table>
-                            <td>
-                                <a hreflang="#"><img src="imgg/SaintAspais.jpg" height = "180px"alt="logoSA"></a>
-                            </td>
-                            <td><h4>
-                               
-                            J'ai réalisé ma première année de BTS SIO option SISR au sein de l'établissement Saint Aspais.
-                            <br> Un établissement réputé pour son expertise dans les domaines scolaires qu'il propose et en partie dans le domaine de l'informatique.
-                            <br> Du 31 Mai au 7 Juillet j'ai rejoins le groupe L3M Holding pour faire mon stage de fin de première année.
-                            </h4>
-                            </td>
-                        </table>
-                <div class="ImageSDC4">
-                            <h3>BTS SIO 2e Année</h3>
-                            <h4>ORT Montreuil</h4>
-                             <table>
-                                    <td>
-                                        <a hreflang="#"><img src="imgg/ort.jpg" height = "180px"alt="logoSA"></a>
-                                    </td>
-                                    <td><h4>
-                                       
-                                    Pour effectué ma seconde année de BTS SIO j'ai choisi l'Ecole ORT Daniel Mayer.
-                                    <br> Cette 2e année de mon cursus se passe en alternance avec l'entreprise AB Tasty.
-                                    </h4>
-                                    </td>
-                                </table>
-                                <div class="ImageSDC10">
-                                    <h3>Cycle Ingénieur - Réseau & Sécurité</h3>
-                                    <h4>ESIEE, Paris.</h4>
-                                     <table>
-                                            <td>
-                                                <a hreflang="#"><img src="imgg/Esiee.jpg" height = "180px"alt="logoSA"></a>
-                                            </td>
-                                            <td><h4>
-                                               
-                                            Je suis actuellement en cursus : cycle ingénieur Réseau & Sécurité en apprentissage au sein de l'ESIEE jusqu'en 2026.
-                                            <br> Cette formation est en apprentissage, ainsi j'accompagnerai mes connaissances apprises à l'ESIEE avec l'expérience acquise chez Sopra Steria.
-                                            </h4>
-                                            </td>
-                                        </table>
-                <div class="ImageSDC3">
-                    <h3>Athlétisme</h3>
-                    <h4>Entente Sportive Caudacienne</h4>
-                    <table>
-                        <td>
-                            <h4>
-                                En termes extra-scolaires je suis passionné par le sport et en partie par l'athlétisme.
-                            <br> Cela fait depuis 2015 que j'ai commencé ce sport. 
-                            <br> J'ai pu nottament remporter certaines compétition départementale et a pu etre qualifié aux championnats d'Ile de France.
-                        </h4>
-                            </td>
-                            <td>
-                                =                                                =
-                            </td>
-                        <td>
-                            <img src="imgg/ESC.png" height = "180px" alt="logESC">
-                        </td>
-                    </table>
+    <section class="section">
+      <div class="container section-card reveal">
+        <h2 data-i18n data-fr="Mon Hobby: l'Athlétisme" data-en="My Hobby: Athletics">Mon Hobby: l'Athlétisme</h2>
+        <p class="hero-sub" data-i18n data-fr="En dehors de l'informatique, je pratique l'athlétisme avec régularité. Cette discipline renforce ma rigueur, mon endurance et ma capacité à rester performant dans la durée, des qualités que j'applique également dans mon travail en IT et cybersécurité." data-en="Outside of IT, I regularly practice athletics. This discipline strengthens my discipline, endurance and long-term consistency, qualities I also apply to my work in IT and cybersecurity.">
+          En dehors de l'informatique, je pratique l'athlétisme avec régularité. Cette discipline renforce ma rigueur, mon endurance et ma capacité à rester performant dans la durée, des qualités que j'applique également dans mon travail en IT et cybersécurité.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-ghost" href="https://www.athle.fr/athletes/2113922/bilans" target="_blank" rel="noreferrer" data-i18n data-fr="Voir mon profil athlète" data-en="View my athlete profile">Voir mon profil athlète</a>
+        </div>
+      </div>
+    </section>
 
-                </div>
-            </div>
+    <section class="section">
+      <div class="container section-card reveal">
+        <h2 data-i18n data-fr="Navigation Rapide" data-en="Quick Navigation">Navigation Rapide</h2>
+        <div class="quick-links">
+          <a class="quick-link" href="experience.html" data-i18n data-fr="Explorer mes expériences" data-en="Explore my experience">Explorer mes expériences</a>
+          <a class="quick-link" href="competences.html" data-i18n data-fr="Consulter mes compétences" data-en="Review my skills">Consulter mes compétences</a>
+          <a class="quick-link" href="cv.html" data-i18n data-fr="Ouvrir mon CV" data-en="Open my resume">Ouvrir mon CV</a>
+          <a class="quick-link" href="competences.html" data-i18n data-fr="Voir mes certifications" data-en="View my certifications">Voir mes certifications</a>
+          <a class="quick-link" href="contacts.html" data-i18n data-fr="Démarrer un échange" data-en="Start a conversation">Démarrer un échange</a>
+        </div>
+      </div>
+    </section>
+  </main>
 
-        </section>
-        <section id="Exemple">
-             <div id="langues">
-                <link rel="stylesheet" href="style.css">   
-                  <h2>Langues</h2>
-                 <ul>
-             <table>
-                <tbody>
-                    <tr>
-                        <td>
-                            <li id="Anglais"><p><h4>L'Anglais : C1</h4></p></li>
-                            <li id="Allemand"><p><h4>L'Allemand : A1</h4></p></li>
-                            <li id="Arabe"><p><h4>L'Arabe : B1</h4></p></li>
+  <footer class="site-footer">
+    <div class="container footer-wrap">
+      <span>© 2026 - Mohamed-El-Eddy Hamam</span>
+      <a href="https://www.linkedin.com/in/mohamed-el-eddy-hamam-604687209/" target="_blank" rel="noreferrer">LinkedIn</a>
+    </div>
+  </footer>
 
-                        </td>
-                        <td><img src="imgg/graphique.gif" height="150"></td>
-                    </tr>
-                </tbody>
-            </table>
-             
-                 </div>
-                
-                
-            </ul>
-        </section>
-        <section id="Quelques liens pour en apprendre plus">
-            <div id="liiens" 
-            <link rel="stylesheet" href="style.css">        
-                <h2>Quelques liens:</h2>
-
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <p><h4>Mon Linkedin: <a href="https://www.linkedin.com/in/mohamed-el-eddy-hamam-604687209/" title="N'hesitez pas!">Ici</a> </h4></p>
-                                
-                                <p><h4>Programme filière : Ingénieur Réseau et Sécurité <a href="https://www.esiee.fr/sites/default/files/atoms/files/programme-detaille-apprentissage-reseaux-securite-2022-2023.pdf">Ici</a></h4></p>
-                                
-    
-                            </td>
-                            <td><img src="imgg/social.gif" height="190"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-
-            </div>    
-        </section>
-    
-        <footer>
-            <div id="contacts">
-                <link rel="stylesheet" href="style.css">
-                <h2>Contactez-moi</h2>
-                <form action="https://formspree.io/f/xkgnbjpk" method="POST">
-                    <input type="email" name="email" placeholder="Votre Adresse E-Mail" required>
-                    <textarea name="message" placeholder="Écrivez votre message ici..." required></textarea>
-                    <button type="submit">Envoyer</button>
-                </form>
-            </div>
-            
-     
-            <div id="Trait"></div>
-            <div id="copyright">
-                <span>© From M HAMAM</span>
-                
-            </div>
-            <div id="Icon">
-                <a href="https://www.linkedin.fr"<i class="fa fa-linkedin"></i></a>
-                
-                
-            </div>
-
-        </footer>    
-    </body>
+  <script src="main.js"></script>
+</body>
 </html>
+
+
+

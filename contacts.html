@@ -1,65 +1,80 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="fr">
 <head>
-<body>
-    <header>
-
-        <nav>
-            <ul>
-                <link rel="stylesheet" href="style.css">
-                <li id="logo"><a href="index.html">
-                        ACCUEIL
-                    </a>
-                </li>
-                <li><a href="contacts.html">
-                    Contacts
-                </a>
-                </li>
-                <li><a href="cv.html">
-                        CV
-                    </a>
-                </li>
-                <li><a href="competences.html">
-                    Competences
-                </a>
-                </li>
-                <li><a href="experience.html">
-                    Experience
-                </a>
-                </li>   
-        
-             </ul>
-
-        </nav>
-    </header>
-
-    <div id="Dobby">
-        <h1>Contacts</h1>
-        <div id="Presentation"></div>
-    </div>
-
-
-</body>
-    <title>Me contacter</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contactez Mohamed-El-Eddy Hamam pour un échange, un projet ou une opportunité.">
+  <title>Contacts | Mohamed-El-Eddy Hamam</title>
+  <link rel="stylesheet" href="modern.css">
 </head>
-
 <body>
-    <section id="Resume">
-        <link rel="stylesheet" href="style.css">
-        <div id="texte1">
-            <h2>Contacts</h2>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html">M.E. Hamam</a>
+      <nav aria-label="Navigation principale">
+        <ul class="nav-links">
+          <li><a href="index.html" data-i18n data-fr="Accueil" data-en="Home">Accueil</a></li>
+          <li><a href="experience.html" data-i18n data-fr="Expérience" data-en="Experience">Expérience</a></li>
+          <li><a href="competences.html" data-i18n data-fr="Compétences" data-en="Skills">Compétences</a></li>
+          <li><a href="cv.html" data-i18n data-fr="CV" data-en="Resume">CV</a></li>
+          <li><a href="contacts.html" data-i18n data-fr="Contacts" data-en="Contact">Contacts</a></li>
+        </ul>
+      </nav>
+      <button id="langToggle" class="lang-toggle" type="button" aria-label="Changer la langue" data-i18n data-fr="EN" data-en="FR" data-aria-fr="Changer la langue" data-aria-en="Change language">EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container section-card reveal">
+        <p class="kicker" data-i18n data-fr="Restons en contact" data-en="Let's stay in touch">Restons en contact</p>
+        <h1 data-i18n data-fr="Contact" data-en="Contact">Contact</h1>
+        <p class="page-intro" data-i18n data-fr="Tu peux me contacter pour échanger autour d'une alternance, d'un projet réseau/cyber, ou d'une collaboration." data-en="You can contact me to discuss an apprenticeship, a network/cyber project, or a collaboration.">
+          Tu peux me contacter pour échanger autour d'une alternance, d'un projet réseau/cyber, ou d'une collaboration.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container section-card reveal">
+        <div class="contact-grid">
+          <article class="contact-card">
+            <h3 data-i18n data-fr="Envoyer un message" data-en="Send a message">Envoyer un message</h3>
+            <p data-i18n data-fr="Réponse rapide par email." data-en="Fast response by email.">Réponse rapide par email.</p>
+            <form class="contact-form" action="https://formspree.io/f/xkgnbjpk" method="POST">
+              <label for="email" data-i18n data-fr="Adresse email" data-en="Email address">Adresse email</label>
+              <input id="email" type="email" name="email" placeholder="nom@email.com" data-i18n data-placeholder-fr="nom@email.com" data-placeholder-en="name@email.com" required>
+
+              <label for="message" data-i18n data-fr="Message" data-en="Message">Message</label>
+              <textarea id="message" name="message" placeholder="Bonjour, je vous contacte pour..." data-i18n data-placeholder-fr="Bonjour, je vous contacte pour..." data-placeholder-en="Hello, I am contacting you about..." required></textarea>
+
+              <button class="btn btn-primary" type="submit" data-i18n data-fr="Envoyer" data-en="Send">Envoyer</button>
+            </form>
+          </article>
+
+          <article class="contact-card">
+            <h3 data-i18n data-fr="Coordonnées" data-en="Contact details">Coordonnées</h3>
+            <p style="margin-bottom: 12px;" data-i18n data-fr="LinkedIn et localisation." data-en="LinkedIn and location.">LinkedIn et localisation.</p>
             <p>
-                <img src="imgg/cartev.PNG" height="400"><a href=""></a>
+              <a class="btn btn-ghost" href="https://www.linkedin.com/in/mohamed-el-eddy-hamam-604687209/" target="_blank" rel="noreferrer" data-i18n data-fr="Voir LinkedIn" data-en="View LinkedIn">Voir LinkedIn</a>
             </p>
-            </div>
-            
+            <img class="contact-map" src="imgg/cartev.PNG" alt="Carte de localisation">
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-wrap">
+      <span>© 2026 - Mohamed-El-Eddy Hamam</span>
+      <a href="index.html" data-i18n data-fr="Retour à l'accueil" data-en="Back to home">Retour à l'accueil</a>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
 </body>
-<footer>
-</div>
-<div id="Trait"></div>
-<div id="copyright">
-    <span>© From M HAMAM</span>
-    
-</div>
-</footer>
 </html>
+
+
+
