@@ -3,14 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Contactez Mohamed-El-Eddy Hamam pour un échange, un projet ou une opportunité.">
+  <meta name="description" content="Contactez Mohamed-El-Eddy Hamam pour un CDI, un CDD, un projet ou une opportunité, en France comme à l'étranger.">
   <title>Contacts | Mohamed-El-Eddy Hamam</title>
   <link rel="stylesheet" href="modern.css">
 </head>
-<body>
+<body class="contact-page">
   <header class="site-header">
     <div class="nav-wrap">
-      <a class="brand" href="index.html">M.E. Hamam</a>
+      <a class="brand" href="index.html" data-logo>
+        <span class="logo-letter">M</span>
+        <span class="logo-dot">.</span>
+        <span class="logo-letter">H</span>
+      </a>
       <nav aria-label="Navigation principale">
         <ul class="nav-links">
           <li><a href="index.html" data-i18n data-fr="Accueil" data-en="Home">Accueil</a></li>
@@ -25,13 +29,18 @@
   </header>
 
   <main>
-    <section class="page-hero">
+    <section class="page-hero contact-hero">
       <div class="container section-card reveal">
         <p class="kicker" data-i18n data-fr="Restons en contact" data-en="Let's stay in touch">Restons en contact</p>
         <h1 data-i18n data-fr="Contact" data-en="Contact">Contact</h1>
-        <p class="page-intro" data-i18n data-fr="Tu peux me contacter pour échanger autour d'une alternance, d'un projet réseau/cyber, ou d'une collaboration." data-en="You can contact me to discuss an apprenticeship, a network/cyber project, or a collaboration.">
-          Tu peux me contacter pour échanger autour d'une alternance, d'un projet réseau/cyber, ou d'une collaboration.
+        <p class="page-intro" data-i18n data-fr="Tu peux me contacter pour échanger autour d'un CDI, d'un CDD, d'un projet réseau/cyber, ou d'une opportunité en France comme à l'étranger." data-en="You can contact me to discuss a permanent role, a fixed-term position, a network/cyber project, or an opportunity in France or abroad.">
+          Tu peux me contacter pour échanger autour d'un CDI, d'un CDD, d'un projet réseau/cyber, ou d'une opportunité en France comme à l'étranger.
         </p>
+        <ul class="pill-list contact-pills">
+          <li data-i18n data-fr="Disponible pour CDI" data-en="Available for permanent roles">Disponible pour CDI</li>
+          <li data-i18n data-fr="Ouvert aux CDD" data-en="Open to fixed-term contracts">Ouvert aux CDD</li>
+          <li data-i18n data-fr="Mobilité internationale" data-en="Open to international opportunities">Mobilité internationale</li>
+        </ul>
       </div>
     </section>
 
@@ -40,15 +49,31 @@
         <div class="contact-grid">
           <article class="contact-card">
             <h3 data-i18n data-fr="Envoyer un message" data-en="Send a message">Envoyer un message</h3>
-            <p data-i18n data-fr="Réponse rapide par email." data-en="Fast response by email.">Réponse rapide par email.</p>
-            <form class="contact-form" action="https://formspree.io/f/xkgnbjpk" method="POST">
+            <p data-i18n data-fr="Réponse rapide par email. Le formulaire est maintenant traité via un nouveau backend FormSubmit." data-en="Fast response by email. This form now runs on a new FormSubmit backend.">Réponse rapide par email. Le formulaire est maintenant traité via un nouveau backend FormSubmit.</p>
+            <form
+              class="contact-form"
+              data-contact-form
+              action="https://formsubmit.co/ajax/eddy.hamam@gmail.com"
+              method="POST"
+            >
+              <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="contact-honeypot">
+              <input type="hidden" name="_captcha" value="false">
+              <input type="hidden" name="_template" value="table">
+
+              <label for="name" data-i18n data-fr="Nom" data-en="Name">Nom</label>
+              <input id="name" type="text" name="name" placeholder="Votre nom" data-i18n data-placeholder-fr="Votre nom" data-placeholder-en="Your name" required>
+
               <label for="email" data-i18n data-fr="Adresse email" data-en="Email address">Adresse email</label>
               <input id="email" type="email" name="email" placeholder="nom@email.com" data-i18n data-placeholder-fr="nom@email.com" data-placeholder-en="name@email.com" required>
+
+              <label for="subject" data-i18n data-fr="Objet" data-en="Subject">Objet</label>
+              <input id="subject" type="text" name="subject" placeholder="CDI / CDD / Projet" data-i18n data-placeholder-fr="CDI / CDD / Projet" data-placeholder-en="Permanent / Contract / Project" required>
 
               <label for="message" data-i18n data-fr="Message" data-en="Message">Message</label>
               <textarea id="message" name="message" placeholder="Bonjour, je vous contacte pour..." data-i18n data-placeholder-fr="Bonjour, je vous contacte pour..." data-placeholder-en="Hello, I am contacting you about..." required></textarea>
 
-              <button class="btn btn-primary" type="submit" data-i18n data-fr="Envoyer" data-en="Send">Envoyer</button>
+              <button class="btn btn-primary" type="submit" data-submit-label data-i18n data-fr="Envoyer" data-en="Send">Envoyer</button>
+              <p class="contact-status" data-contact-status aria-live="polite"></p>
             </form>
           </article>
 

@@ -10,7 +10,11 @@
 <body>
   <header class="site-header">
     <div class="nav-wrap">
-      <a class="brand" href="index.html">M.E. Hamam</a>
+      <a class="brand" href="index.html" data-logo>
+        <span class="logo-letter">M</span>
+        <span class="logo-dot">.</span>
+        <span class="logo-letter">H</span>
+      </a>
       <nav aria-label="Navigation principale">
         <ul class="nav-links">
           <li><a href="index.html" data-i18n data-fr="Accueil" data-en="Home">Accueil</a></li>
@@ -25,13 +29,22 @@
   </header>
 
   <main>
-    <section class="hero">
+    <section class="hero hero-with-glitch">
+      <div
+        class="hero-letter-glitch"
+        data-letter-glitch
+        data-glitch-colors="#39d0ff,#f7b538"
+        data-glitch-speed="50"
+        data-center-vignette="true"
+        data-outer-vignette="false"
+        aria-hidden="true"
+      ></div>
       <div class="container hero-grid">
         <article class="hero-panel reveal">
           <p class="kicker">Portfolio 2026</p>
           <h1>Mohamed-El-Eddy Hamam</h1>
-          <p class="hero-sub" data-i18n data-fr="Profil polyvalent IT, sécurité et support. En dernière année de cycle ingénieur réseaux et sécurité, je contribue à des environnements exigeants avec une approche structurée, orientée résultats et qualité de service." data-en="Versatile IT, security and support profile. In my final year of network and security engineering, I contribute to demanding environments with a structured, results-driven and service-focused approach.">
-            Profil polyvalent IT, sécurité et support. En dernière année de cycle ingénieur réseaux et sécurité, je contribue à des environnements exigeants avec une approche structurée, orientée résultats et qualité de service.
+            <p class="hero-sub" data-i18n data-fr="Profil polyvalent IT, sécurité et support. En dernière année de cycle ingénieur réseaux et sécurité, je recherche un CDI ou un CDD, et je reste ouvert aux opportunités en France comme à l'étranger. Je contribue à des environnements exigeants avec une approche structurée, orientée résultats et qualité de service." data-en="Versatile IT, security and support profile. In my final year of network and security engineering, I am looking for a permanent or fixed-term position, and I am open to opportunities both in France and abroad. I contribute to demanding environments with a structured, results-driven and service-focused approach.">
+              Profil polyvalent IT, sécurité et support. En dernière année de cycle ingénieur réseaux et sécurité, je recherche un CDI ou un CDD, et je reste ouvert aux opportunités en France comme à l'étranger. Je contribue à des environnements exigeants avec une approche structurée, orientée résultats et qualité de service.
           </p>
           <ul class="hero-facts">
             <li data-i18n data-fr="22 ans" data-en="22 years old">22 ans</li>
@@ -46,10 +59,84 @@
           </div>
         </article>
 
-        <aside class="hero-photo reveal" aria-label="Photo de presentation">
+        <aside class="hero-photo hero-photo-glass reveal" aria-label="Photo de presentation" data-glass-lens>
+          <div class="glass-stage" aria-hidden="true">
+            <span class="glass-glow glass-glow-a"></span>
+            <span class="glass-glow glass-glow-b"></span>
+            <span class="glass-grid"></span>
+            <span class="glass-lens"></span>
+            <span class="glass-ring glass-ring-a"></span>
+            <span class="glass-ring glass-ring-b"></span>
+          </div>
           <img src="imgg/moi.jpeg" alt="Photo de Mohamed-El-Eddy Hamam">
           <div class="hero-badge" data-i18n data-fr="Réseaux | Sécurité | Systèmes" data-en="Networks | Security | Systems">Réseaux | Sécurité | Systèmes</div>
         </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container section-card reveal">
+        <h2 data-i18n data-fr="Expériences & Certifications" data-en="Experience & Certifications">Expériences & Certifications</h2>
+        <p class="section-note" data-i18n data-fr="Une lecture rapide des environnements dans lesquels j'ai évolué et des certifications qui structurent mon parcours." data-en="A quick visual overview of the environments I have worked in and the certifications that support my profile.">Une lecture rapide des environnements dans lesquels j'ai évolué et des certifications qui structurent mon parcours.</p>
+
+        <div class="logo-loop-stack">
+          <div class="logo-loop-head">
+            <h3 data-i18n data-fr="Expériences et certifications" data-en="Experience and certifications">Expériences et certifications</h3>
+            <div class="hero-actions">
+              <a class="btn btn-ghost" href="experience.html" data-i18n data-fr="Voir les expériences" data-en="View experience">Voir les expériences</a>
+              <a class="btn btn-ghost" href="competences.html" data-i18n data-fr="Voir les certifications" data-en="View certifications">Voir les certifications</a>
+            </div>
+          </div>
+
+          <div class="logo-loop" data-logo-loop data-direction="left" data-speed="36" aria-label="Logos des expériences et certifications">
+            <div class="logo-loop-track">
+              <a class="logo-loop-item" href="experience.html" aria-label="L3M Holding">
+                <img src="imgg/l3m.jpeg" alt="Logo L3M Holding">
+                <span>L3M Holding</span>
+              </a>
+              <a class="logo-loop-item" href="experience.html" aria-label="AB Tasty">
+                <img src="imgg/abtasty.avif" alt="Logo AB Tasty">
+                <span>AB Tasty</span>
+              </a>
+              <a class="logo-loop-item" href="experience.html" aria-label="Sopra Steria">
+                <img src="imgg/sopra_steria.png" alt="Logo Sopra Steria">
+                <span>Sopra Steria</span>
+              </a>
+              <a class="logo-loop-item" href="competences.html" aria-label="Great Learning">
+                <img src="imgg/great.jpg" alt="Logo Great Learning">
+                <span>Great Learning</span>
+              </a>
+              <a class="logo-loop-item" href="competences.html" aria-label="Packet Tracer">
+                <img src="imgg/packet.jfif" alt="Logo Packet Tracer">
+                <span>Packet Tracer</span>
+              </a>
+              <a class="logo-loop-item" href="competences.html" aria-label="ANSSI MOOC">
+                <img src="imgg/mooc.png" alt="Logo MOOC ANSSI">
+                <span>MOOC ANSSI</span>
+              </a>
+              <a class="logo-loop-item" href="competences.html" aria-label="Juniper">
+                <img src="imgg/junyper.png" alt="Logo Juniper">
+                <span>Juniper</span>
+              </a>
+              <a class="logo-loop-item" href="competences.html" aria-label="CEH">
+                <img src="imgg/ceh.png" alt="Logo CEH">
+                <span>CEH</span>
+              </a>
+              <a class="logo-loop-item" href="competences.html" aria-label="Check Point">
+                <img src="imgg/checkpoint.svg" alt="Logo Check Point">
+                <span>Check Point</span>
+              </a>
+              <a class="logo-loop-item" href="competences.html" aria-label="TOEIC">
+                <img src="imgg/toeic.webp" alt="Logo TOEIC">
+                <span>TOEIC</span>
+              </a>
+              <a class="logo-loop-item" href="competences.html" aria-label="Voltaire">
+                <img src="imgg/voltaire.png" alt="Logo Voltaire">
+                <span>Voltaire</span>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
