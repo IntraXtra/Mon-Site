@@ -241,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = contactForm.querySelector('[data-submit-label]');
     const baseButtonLabel = submitButton ? submitButton.textContent : 'Envoyer';
     const inputs = contactForm.querySelectorAll('input, textarea');
+    const isFormspree = endpoint && endpoint.includes('formspree.io');
 
     const setStatus = (kind, text) => {
       if (!statusNode) return;
@@ -261,18 +262,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     contactForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
       const formData = new FormData(contactForm);
       const lang = document.documentElement.lang === 'en' ? 'en' : 'fr';
       const honeypot = formData.get('_honey');
 
       // Spam check
       if (honeypot) {
+        event.preventDefault();
         setStatus('ok', lang === 'en' ? 'Message sent successfully. I will get back to you soon.' : 'Message envoye avec succes. Je vous repondrai rapidement.');
         contactForm.reset();
         return;
       }
+
+      // If using Formspree, let it submit normally
+      if (isFormspree) {
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = lang === 'en' ? 'Sending...' : 'Envoi...';
+        }
+        setStatus('', lang === 'en' ? 'Sending your message...' : 'Envoi de votre message...');
+        return; // Allow normal form submission to Formspree
+      }
+
+      // For non-Formspree endpoints, use fetch
+      event.preventDefault();
 
       if (!endpoint) {
         setStatus('error', lang === 'en' ? 'Missing form endpoint.' : 'Endpoint du formulaire manquant.');
