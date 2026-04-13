@@ -537,11 +537,26 @@ span {
   background: linear-gradient(120deg, var(--accent), #78e6ff);
   color: #062035;
   box-shadow: 0 12px 30px rgba(57, 208, 255, 0.32);
+  width: 100%;
+  min-height: 48px;
+  font-size: 1rem;
 }
 
 .btn-primary:hover,
 .btn-primary:focus-visible {
   transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(57, 208, 255, 0.48);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 8px 20px rgba(57, 208, 255, 0.24);
 }
 
 .btn-ghost {
@@ -843,62 +858,93 @@ span {
 }
 
 .contact-card {
-  padding: 22px;
+  padding: 28px;
   border-radius: var(--radius-md);
   background: var(--card);
   border: 1px solid rgba(159, 194, 230, 0.24);
-  transition: transform 0.28s ease, border-color 0.28s ease, background 0.28s ease;
+  transition: transform 0.28s ease, border-color 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
 }
 
 .contact-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   border-color: rgba(57, 208, 255, 0.35);
   background: rgba(12, 39, 61, 0.84);
+  box-shadow: 0 12px 32px rgba(57, 208, 255, 0.15);
 }
 
 .contact-card h3 {
-  margin-bottom: 6px;
+  margin: 0 0 8px 0;
+  font-size: 1.3rem;
 }
 
 .contact-card p {
-  margin: 0;
+  margin: 0 0 20px 0;
   color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .contact-form {
   display: grid;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.contact-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .contact-form label {
-  font-size: 0.9rem;
-  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.3px;
 }
 
 .contact-form input,
 .contact-form textarea {
   width: 100%;
-  border: 1px solid rgba(159, 194, 230, 0.24);
-  background: rgba(6, 24, 39, 0.7);
+  border: 1px solid rgba(159, 194, 230, 0.2);
+  background: rgba(6, 24, 39, 0.5);
   color: var(--text);
-  border-radius: 12px;
-  padding: 12px 12px;
+  border-radius: 10px;
+  padding: 14px 14px;
   font: inherit;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: rgba(159, 194, 230, 0.35);
+}
+
+.contact-form input:hover,
+.contact-form textarea:hover {
+  border-color: rgba(57, 208, 255, 0.28);
+  background: rgba(6, 24, 39, 0.65);
 }
 
 .contact-form input:focus,
 .contact-form textarea:focus {
   outline: none;
-  border-color: rgba(57, 208, 255, 0.52);
-  box-shadow: 0 0 0 3px rgba(57, 208, 255, 0.12);
-  background: rgba(6, 24, 39, 0.9);
+  border-color: rgba(57, 208, 255, 0.6);
+  box-shadow: 0 0 0 2px rgba(57, 208, 255, 0.08), inset 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: rgba(6, 24, 39, 0.8);
+}
+
+.contact-form input:invalid:not(:placeholder-shown),
+.contact-form textarea:invalid:not(:placeholder-shown) {
+  border-color: rgba(255, 143, 143, 0.4);
+  background: rgba(255, 143, 143, 0.04);
 }
 
 .contact-form textarea {
-  min-height: 130px;
+  min-height: 140px;
   resize: vertical;
+  font-family: inherit;
 }
 
 .contact-honeypot {
@@ -907,21 +953,35 @@ span {
   width: 1px;
   height: 1px;
   opacity: 0;
+  pointer-events: none;
 }
 
 .contact-status {
-  min-height: 1.3em;
+  min-height: 24px;
   margin: 0;
+  padding: 8px 12px;
   color: var(--muted);
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .contact-status.is-ok {
-  color: var(--ok);
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .contact-status.is-error {
-  color: #ff8f8f;
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.2);
 }
 
 body.contact-page .contact-hero {

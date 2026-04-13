@@ -236,38 +236,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const contactForm = document.querySelector('[data-contact-form]');
   if (contactForm) {
+    const endpoint = contactForm.getAttribute('action');
     const statusNode = contactForm.querySelector('[data-contact-status]');
     const submitButton = contactForm.querySelector('[data-submit-label]');
     const baseButtonLabel = submitButton ? submitButton.textContent : 'Envoyer';
+    const inputs = contactForm.querySelectorAll('input, textarea');
 
     const setStatus = (kind, text) => {
-      if (!statusNode) {
-        return;
-      }
+      if (!statusNode) return;
       statusNode.textContent = text;
       statusNode.classList.remove('is-ok', 'is-error');
-      if (kind === 'ok') {
-        statusNode.classList.add('is-ok');
-      }
-      if (kind === 'error') {
-        statusNode.classList.add('is-error');
-      }
+      if (kind === 'ok') statusNode.classList.add('is-ok');
+      if (kind === 'error') statusNode.classList.add('is-error');
     };
+
+    // Clear status on input
+    inputs.forEach((input) => {
+      input.addEventListener('input', () => {
+        if (statusNode.classList.contains('is-error')) {
+          statusNode.textContent = '';
+          statusNode.classList.remove('is-error');
+        }
+      });
+    });
 
     contactForm.addEventListener('submit', async (event) => {
       event.preventDefault();
 
       const formData = new FormData(contactForm);
-      const endpoint = contactForm.getAttribute('action');
       const lang = document.documentElement.lang === 'en' ? 'en' : 'fr';
+      const honeypot = formData.get('_honey');
 
-      if (window.location.protocol === 'file:') {
-        setStatus(
-          'error',
-          lang === 'en'
-            ? 'Email sending is blocked in local file mode. Open the site via a local server (for example: Live Server) then retry.'
-            : 'L\'envoi email est bloque en mode fichier local. Ouvrez le site via un serveur local (exemple: Live Server), puis reessayez.'
-        );
+      // Spam check
+      if (honeypot) {
+        setStatus('ok', lang === 'en' ? 'Message sent successfully. I will get back to you soon.' : 'Message envoye avec succes. Je vous repondrai rapidement.');
+        contactForm.reset();
         return;
       }
 
@@ -284,33 +287,33 @@ document.addEventListener('DOMContentLoaded', () => {
       setStatus('', lang === 'en' ? 'Sending your message...' : 'Envoi de votre message...');
 
       try {
+        const payload = Object.fromEntries(formData);
+        delete payload._honey;
+        
         const response = await fetch(endpoint, {
           method: 'POST',
-          headers: { Accept: 'application/json' },
-          body: formData,
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload),
         });
 
-        const payload = await response.json().catch(() => null);
+        const result = await response.json().catch(() => ({}));
 
-        if (!response.ok || (payload && String(payload.success) !== 'true')) {
-          const providerMessage = payload && payload.message ? String(payload.message) : '';
-          const needsActivation = /activate|confirm|verification|verify/i.test(providerMessage);
-
-          if (needsActivation) {
-            setStatus(
-              'error',
-              lang === 'en'
-                ? 'Please activate your FormSubmit email first (check your inbox), then resend.'
-                : 'Activez d\'abord votre email FormSubmit (verifiez votre boite mail), puis renvoyez le message.'
-            );
-            return;
-          }
-
-          throw new Error('Request failed');
+        if (!response.ok) {
+          const message = result.message || (lang === 'en' ? 'Failed to send message.' : 'Impossible d\'envoyer le message.');
+          setStatus('error', message);
+          return;
         }
 
         contactForm.reset();
-        setStatus('ok', lang === 'en' ? 'Message sent successfully. I will get back to you soon.' : 'Message envoye avec succes. Je vous repondrai rapidement.');
+        setStatus('ok', lang === 'en' ? '✨ Message sent successfully. I will get back to you soon.' : '✨ Message envoye avec succes. Je vous repondrai rapidement.');
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          if (statusNode.classList.contains('is-ok')) {
+            statusNode.textContent = '';
+            statusNode.classList.remove('is-ok');
+          }
+        }, 5000);
       } catch (error) {
         setStatus('error', lang === 'en' ? 'An error occurred. Please retry or contact me on LinkedIn.' : 'Une erreur est survenue. Reessayez ou contactez-moi via LinkedIn.');
       } finally {
